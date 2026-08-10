@@ -3,8 +3,7 @@
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/icon";
 import { useToast } from "@/components/ui/toast";
-
-const TIMEZONES = ["Europe/Kyiv", "Europe/London", "Europe/Berlin", "America/New_York", "Asia/Singapore"];
+import { TIMEZONES } from "@/lib/timezones";
 
 const inputClass =
   "w-full rounded border border-card-border bg-surface-container-lowest px-3 py-2 font-mono text-code-label text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none";
@@ -77,7 +76,9 @@ export function WorkspaceSettings({
         <label className="mb-1 block font-mono text-code-label text-on-surface">TIMEZONE</label>
         <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className={inputClass}>
           {TIMEZONES.map((tz) => (
-            <option key={tz}>{tz}</option>
+            <option key={tz.value} value={tz.value}>
+              {tz.label}
+            </option>
           ))}
         </select>
       </div>

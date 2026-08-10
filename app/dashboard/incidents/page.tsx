@@ -36,11 +36,21 @@ export default async function IncidentsPage() {
         </header>
 
         <div className="flex flex-col gap-10">
-          {incidents.map((incident) => (
-            <div key={incident.id} className="rounded-xl border border-card-border bg-card p-6">
-              <IncidentTimeline incident={incident} />
+          {incidents.length === 0 ? (
+            <div className="rounded-xl border border-card-border bg-card p-10 text-center">
+              <p className="text-body-lg text-on-surface">No incidents yet</p>
+              <p className="mx-auto mt-2 max-w-md text-body-sm text-on-surface-variant">
+                You&apos;re all clear. Incidents are recorded automatically when a monitor goes down
+                and marked resolved when it recovers. You can also declare one manually.
+              </p>
             </div>
-          ))}
+          ) : (
+            incidents.map((incident) => (
+              <div key={incident.id} className="rounded-xl border border-card-border bg-card p-6">
+                <IncidentTimeline incident={incident} />
+              </div>
+            ))
+          )}
         </div>
       </Container>
     </div>

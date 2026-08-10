@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase";
 import { getUserOrgId } from "@/lib/auth-org";
+import { TIMEZONE_VALUES } from "@/lib/timezones";
 
 export const dynamic = "force-dynamic";
-
-const TIMEZONES = ["Europe/Kyiv", "Europe/London", "Europe/Berlin", "America/New_York", "Asia/Singapore"];
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -24,7 +23,7 @@ export async function PATCH(request: Request) {
       { status: 400 }
     );
   }
-  if (!TIMEZONES.includes(timezone)) {
+  if (!TIMEZONE_VALUES.includes(timezone)) {
     return NextResponse.json({ error: "Invalid timezone." }, { status: 400 });
   }
 
