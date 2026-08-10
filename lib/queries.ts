@@ -19,20 +19,38 @@ type DbMonitor = {
   created_at: string;
 };
 
-export type OrgPlan = "free" | "paid";
+export type OrgPlan = "free" | "paid" | "yearly";
+
+export const PLAN_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
+export function normalizePlan(value: unknown): OrgPlan {
+  return value === "paid" || value === "yearly" ? value : "free";
+}
 
 export function planCheckIntervalSec(plan: OrgPlan): number {
-  return plan === "paid" ? 300 : 3600;
+  return plan === "free" ? 3600 : 300;
 }
 
 export async function getOrgPlan(orgId: string): Promise<OrgPlan> {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("organizations")
-    .select("plan")
+    .select("plan, plan_expires_at")
     .eq("id", orgId)
     .single();
-  return data?.plan === "paid" ? "paid" : "free";
+
+  if (data?.plan === "yearly") {
+    const expires = data.plan_expires_at ? new Date(data.plan_expires_at).getTime() : 0;
+    if (expires && expires < Date.now()) {
+      await supabase
+        .from("organizations")
+        .update({ plan: "free", plan_expires_at: null })
+        .eq("id", orgId);
+      return "free";
+    }
+    return "yearly";
+  }
+  return normalizePlan(data?.plan);
 }
 
 async function fetchMonitorRows(orgId: string): Promise<DbMonitor[]> {

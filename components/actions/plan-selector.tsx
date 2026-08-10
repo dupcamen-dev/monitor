@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Icon } from "@/components/icon";
 import { useToast } from "@/components/ui/toast";
 
-export type PlanKey = "free" | "paid";
+export type PlanKey = "free" | "paid" | "yearly";
 
 const plans: { key: PlanKey; name: string; price: string; cadence: string; desc: string }[] = [
   {
@@ -20,6 +20,13 @@ const plans: { key: PlanKey; name: string; price: string; cadence: string; desc:
     price: "$19/mo",
     cadence: "checks every 5 minutes",
     desc: "Faster detection with 5-minute checks and full history.",
+  },
+  {
+    key: "yearly",
+    name: "Yearly",
+    price: "$150/yr",
+    cadence: "checks every 5 minutes",
+    desc: "One year of Pro checks. Auto-expires after 12 months.",
   },
 ];
 
@@ -37,14 +44,15 @@ export function PlanSelector({ plan }: { plan: PlanKey }) {
       });
       const payload = await res.json().catch(() => null);
       if (!res.ok) throw new Error(payload?.error ?? "Failed to update plan");
-      show(`Plan switched to ${key === "paid" ? "Paid" : "Free"}`);
+      const label = plans.find((p) => p.key === key)?.name ?? key;
+      show(`Plan switched to ${label}`);
     } catch (e) {
       show(e instanceof Error ? e.message : "Could not update plan", "error");
     }
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {plans.map((p) => {
         const activePlan = active === p.key;
         return (

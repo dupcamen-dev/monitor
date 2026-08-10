@@ -21,10 +21,25 @@ export async function POST(request: Request) {
   const now = new Date().toISOString();
   const nowMs = Date.now();
 
-  const { data: orgs } = await supabase.from("organizations").select("id, plan");
+  const { data: orgs } = await supabase.from("organizations").select("id, plan, plan_expires_at");
   const checkEveryMs = new Map<string, number>();
+  const expiredOrgs: string[] = [];
   for (const org of orgs ?? []) {
-    checkEveryMs.set(org.id, (org.plan === "paid" ? 5 : 60) * 60 * 1000);
+    let plan = org.plan;
+    if (plan === "yearly") {
+      const expires = org.plan_expires_at ? new Date(org.plan_expires_at).getTime() : 0;
+      if (expires && expires < nowMs) {
+        expiredOrgs.push(org.id);
+        plan = "free";
+      }
+    }
+    checkEveryMs.set(org.id, (plan === "paid" || plan === "yearly" ? 5 : 60) * 60 * 1000);
+  }
+  if (expiredOrgs.length) {
+    await supabase
+      .from("organizations")
+      .update({ plan: "free", plan_expires_at: null })
+      .in("id", expiredOrgs);
   }
 
   const { data: monitors } = await supabase

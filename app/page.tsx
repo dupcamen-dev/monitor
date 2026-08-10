@@ -188,11 +188,12 @@ export default function HomePage() {
         <section id="pricing" className="py-16">
           <Container>
             <h2 className="mb-12 text-center text-headline-md text-on-surface">Simple, honest pricing</h2>
-            <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
               {[
                 {
                   name: "Free",
                   price: "$0",
+                  billing: "/ month",
                   tagline: "For side projects",
                   cadence: "Checks every 1 hour",
                   cta: "Start for free",
@@ -201,6 +202,7 @@ export default function HomePage() {
                 {
                   name: "Paid",
                   price: "$19",
+                  billing: "/ month",
                   tagline: "For teams that need speed",
                   cadence: "Checks every 5 minutes",
                   cta: "Start 14-day trial",
@@ -212,6 +214,22 @@ export default function HomePage() {
                     "90-day history",
                   ],
                   featured: true,
+                },
+                {
+                  name: "Yearly",
+                  price: "$150",
+                  billing: "/ year",
+                  tagline: "Best value for power users",
+                  cadence: "Checks every 5 minutes",
+                  cta: "Go yearly",
+                  badge: "BEST VALUE",
+                  features: [
+                    "Everything in Paid",
+                    "5-minute checks",
+                    "Telegram, email & Discord alerts",
+                    "90-day history",
+                    "Save $78 vs monthly",
+                  ],
                 },
               ].map((plan) => (
                 <div
@@ -230,10 +248,15 @@ export default function HomePage() {
                           POPULAR
                         </span>
                       )}
+                      {plan.badge && (
+                        <span className="rounded bg-secondary/15 px-2 py-0.5 font-mono text-code-label text-secondary">
+                          {plan.badge}
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-baseline gap-1">
                       <span className="text-display-lg-mobile font-bold text-on-surface">{plan.price}</span>
-                      <span className="font-mono text-code-label text-on-surface-variant">/ month</span>
+                      <span className="font-mono text-code-label text-on-surface-variant">{plan.billing}</span>
                     </div>
                     <p className="mt-1 text-body-sm text-on-surface-variant">{plan.tagline}</p>
                     <p className="mt-3 inline-flex items-center gap-2 rounded bg-surface-container-lowest px-3 py-1.5 font-mono text-code-label text-primary">

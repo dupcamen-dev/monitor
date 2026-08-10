@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase";
 import { createServerClientSSR } from "@/lib/supabase/auth";
+import { normalizePlan } from "@/lib/queries";
 import type { OrgPlan } from "@/lib/queries";
 
 export interface UserOrg {
@@ -32,7 +33,7 @@ export async function getUserOrg(): Promise<UserOrg | null> {
   if (existing) {
     return {
       id: existing.id,
-      plan: existing.plan === "paid" ? "paid" : "free",
+      plan: normalizePlan(existing.plan),
       name: existing.name,
       slug: existing.slug,
     };
@@ -56,7 +57,7 @@ export async function getUserOrg(): Promise<UserOrg | null> {
   if (error || !created) return null;
   return {
     id: created.id,
-    plan: created.plan === "paid" ? "paid" : "free",
+    plan: normalizePlan(created.plan),
     name: created.name,
     slug: created.slug,
   };
