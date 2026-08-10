@@ -79,7 +79,10 @@ export function AddMonitorButton({
       const payload = await res.json().catch(() => null);
       if (!res.ok) throw new Error(payload?.error ?? "Failed to create monitor");
       onCreated?.({ name: name.trim(), url: url.trim(), kind, notify });
-      show(`Monitor "${name.trim()}" created`);
+      const ck = payload?.check;
+      const result =
+        ck?.status === "up" ? `UP · ${ck.latencyMs}ms` : ck?.status === "degraded" ? `degraded · ${ck.latencyMs}ms` : "DOWN";
+      show(`Monitor "${name.trim()}" created · ${result}`, ck?.status === "down" ? "error" : undefined);
       setOpen(false);
       reset();
       router.refresh();
