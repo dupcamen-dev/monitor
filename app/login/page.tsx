@@ -12,9 +12,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex justify-center">
-          <Link href="/">
-            <Logo />
-          </Link>
+          <Logo />
         </div>
         <div className="rounded-xl border border-card-border bg-card p-8">
           <h1 className="text-headline-md text-on-surface">Sign in to your workspace</h1>

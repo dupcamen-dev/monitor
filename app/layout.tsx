@@ -3,6 +3,7 @@ import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { ThemeScript } from "@/components/theme-script";
+import { ThemeHydration } from "@/components/theme-hydration";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -31,7 +32,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geist.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${geist.variable} ${jetbrainsMono.variable}`}>
       <head>
         <ThemeScript />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
@@ -41,7 +42,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-screen bg-background font-sans text-body-sm text-on-surface antialiased">
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <ThemeHydration />
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );
