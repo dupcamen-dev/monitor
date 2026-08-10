@@ -13,13 +13,24 @@ export function SubscribeButton() {
   const [error, setError] = useState("");
   const { show } = useToast();
 
-  const submit = () => {
+  const submit = async () => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError("Please enter a valid email address.");
       return;
     }
-    setDone(true);
-    show("Subscription confirmed");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(payload?.error ?? "Subscription failed");
+      setDone(true);
+      show("Subscription confirmed");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not subscribe. Please try again.");
+    }
   };
 
   return (

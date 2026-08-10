@@ -1,36 +1,35 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { Modal } from "@/components/ui/modal";
 import { Field, inputClass } from "@/components/ui/field";
 import { useToast } from "@/components/ui/toast";
-import { statusPageMonitors } from "@/lib/data";
 
 const incidentStates = [
-  { label: "Investigating", tone: "danger" },
-  { label: "Identified", tone: "danger" },
-  { label: "Monitoring", tone: "neutral" },
-  { label: "Resolved", tone: "success" },
+  { label: "Investigating", tone: "danger", status: "investigating" },
+  { label: "Identified", tone: "danger", status: "identified" },
+  { label: "Monitoring", tone: "neutral", status: "monitoring" },
+  { label: "Resolved", tone: "success", status: "resolved" },
 ] as const;
 
-export function NewIncidentButton() {
+export function NewIncidentButton({ monitors }: { monitors: { id: string; name: string }[] }) {
   const [open, setOpen] = useState(false);
   const { show } = useToast();
+  const router = useRouter();
 
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [state, setState] = useState<(typeof incidentStates)[number]["label"]>("Investigating");
-  const [impacted, setImpacted] = useState<string[]>(["API"]);
+  const [impacted, setImpacted] = useState<string[]>([]);
   const [error, setError] = useState("");
 
-  const toggleImpact = (name: string) => {
-    setImpacted((prev) =>
-      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
-    );
+  const toggleImpact = (id: string) => {
+    setImpacted((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!title.trim()) {
       setError("Incident title is required.");
       return;
@@ -39,12 +38,31 @@ export function NewIncidentButton() {
       setError("Incident message is required.");
       return;
     }
-    show(`Incident "${title.trim()}" published to status page`);
-    setOpen(false);
-    setTitle("");
-    setMessage("");
-    setError("");
-    setState("Investigating");
+    try {
+      const res = await fetch("/api/incidents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title.trim(),
+          status: incidentStates.find((s) => s.label === state)!.status,
+          impact: "minor",
+          message: message.trim(),
+          monitorIds: impacted,
+        }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(payload?.error ?? "Failed to create incident");
+      show(`Incident "${title.trim()}" published to status page`);
+      setOpen(false);
+      setTitle("");
+      setMessage("");
+      setError("");
+      setState("Investigating");
+      setImpacted([]);
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not create incident. Please try again.");
+    }
   };
 
   return (
@@ -112,12 +130,12 @@ export function NewIncidentButton() {
           </Field>
           <Field label="IMPACTED COMPONENTS">
             <div className="flex flex-wrap gap-2">
-              {statusPageMonitors.map((m) => (
+              {monitors.map((m) => (
                 <button
                   key={m.id}
-                  onClick={() => toggleImpact(m.name)}
+                  onClick={() => toggleImpact(m.id)}
                   className={`rounded px-3 py-1.5 font-mono text-code-label transition-colors ${
-                    impacted.includes(m.name)
+                    impacted.includes(m.id)
                       ? "bg-primary text-on-primary"
                       : "border border-card-border text-on-surface-variant hover:border-surface-variant hover:text-on-surface"
                   }`}

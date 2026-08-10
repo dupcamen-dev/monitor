@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { Modal } from "@/components/ui/modal";
 import { Field, inputClass } from "@/components/ui/field";
 import { Toggle } from "@/components/toggle";
 import { useToast } from "@/components/ui/toast";
+import { intervalToSec } from "@/lib/interval";
 import type { MonitorKind } from "@/lib/data";
 
 const monitorTypes: { label: string; kind: MonitorKind }[] = [
@@ -40,6 +42,7 @@ export function AddMonitorButton({
 }: AddMonitorButtonProps) {
   const [open, setOpen] = useState(false);
   const { show } = useToast();
+  const router = useRouter();
 
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
@@ -57,7 +60,7 @@ export function AddMonitorButton({
     setError("");
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!name.trim()) {
       setError("Monitor name is required.");
       return;
@@ -71,10 +74,22 @@ export function AddMonitorButton({
       return;
     }
     const kind = monitorTypes.find((t) => t.label === typeLabel)!.kind;
-    onCreated?.({ name: name.trim(), url: url.trim(), kind, interval, notify });
-    show(`Monitor "${name.trim()}" created`);
-    setOpen(false);
-    reset();
+    try {
+      const res = await fetch("/api/monitors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), url: url.trim(), kind, intervalSec: intervalToSec(interval) }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(payload?.error ?? "Failed to create monitor");
+      onCreated?.({ name: name.trim(), url: url.trim(), kind, interval, notify });
+      show(`Monitor "${name.trim()}" created`);
+      setOpen(false);
+      reset();
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not create monitor. Please try again.");
+    }
   };
 
   const base =

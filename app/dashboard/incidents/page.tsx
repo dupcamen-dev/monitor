@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import { Container } from "@/components/container";
 import { IncidentTimeline } from "@/components/incident-timeline";
 import { NewIncidentButton } from "@/components/actions/new-incident-button";
-import { incidents } from "@/lib/data";
+import { getIncidents, getMonitorOptions } from "@/lib/queries";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Incidents",
 };
 
-export default function IncidentsPage() {
+export default async function IncidentsPage() {
+  const [incidents, monitors] = await Promise.all([getIncidents(), getMonitorOptions()]);
   const resolved = incidents.filter((i) => i.resolved).length;
   const open = incidents.length - resolved;
 
@@ -22,7 +25,7 @@ export default function IncidentsPage() {
               {resolved} resolved · {open} open — all events across your monitors.
             </p>
           </div>
-          <NewIncidentButton />
+          <NewIncidentButton monitors={monitors} />
         </header>
 
         <div className="flex flex-col gap-10">

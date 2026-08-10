@@ -3,7 +3,10 @@ import { Icon } from "@/components/icon";
 import { StatusCode } from "@/components/status-badge";
 import { LiveClock } from "@/components/live-clock";
 import { AddMonitorButton } from "@/components/actions/add-monitor-button";
-import { dashboardMonitors, incidents, uptimePct } from "@/lib/data";
+import { uptimePct } from "@/lib/data";
+import { getStatus } from "@/lib/queries";
+
+export const dynamic = "force-dynamic";
 
 function StatCard({
   label,
@@ -32,38 +35,39 @@ function StatCard({
   );
 }
 
-export default function DashboardPage() {
-  const overallHistory = dashboardMonitors.map((m) => m.history).flat();
+export default async function DashboardPage() {
+  const status = await getStatus();
+  const overallHistory = status.monitors.flatMap((m) => m.history);
   const overall = uptimePct(overallHistory);
+  const incidents30 = status.incidents30;
 
-  const anyDown = dashboardMonitors.some((m) => m.status === "down");
-  const anyPartial = dashboardMonitors.some((m) => m.status === "degraded");
-  const banner = anyDown
-    ? {
-        icon: "error",
-        title: "Service disruption",
-        sub: "One or more monitors are down right now.",
-        iconClass: "text-error",
-        border: "border-error/20",
-        bg: "bg-error-container/10",
-      }
-    : anyPartial
+  const banner =
+    status.overall === "disruption"
       ? {
-          icon: "warning",
-          title: "Partially degraded",
-          sub: "Some monitors are experiencing slow responses.",
-          iconClass: "text-tertiary",
-          border: "border-tertiary/20",
-          bg: "bg-tertiary-container/10",
+          icon: "error",
+          title: "Service disruption",
+          sub: "One or more monitors are down right now.",
+          iconClass: "text-error",
+          border: "border-error/20",
+          bg: "bg-error-container/10",
         }
-      : {
-          icon: "check_circle",
-          title: "All systems operational",
-          sub: "No incidents reported in the last 24 hours.",
-          iconClass: "text-secondary",
-          border: "border-secondary/20",
-          bg: "bg-secondary-container/10",
-        };
+      : status.overall === "degraded"
+        ? {
+            icon: "warning",
+            title: "Partially degraded",
+            sub: "Some monitors are experiencing slow responses.",
+            iconClass: "text-tertiary",
+            border: "border-tertiary/20",
+            bg: "bg-tertiary-container/10",
+          }
+        : {
+            icon: "check_circle",
+            title: "All systems operational",
+            sub: "No incidents reported in the last 24 hours.",
+            iconClass: "text-secondary",
+            border: "border-secondary/20",
+            bg: "bg-secondary-container/10",
+          };
 
   return (
     <div className="flex flex-col gap-12 p-margin-mobile py-10 md:p-margin-desktop">
@@ -102,13 +106,13 @@ export default function DashboardPage() {
           />
           <StatCard
             label="Active Monitors"
-            value={String(dashboardMonitors.length)}
+            value={String(status.monitors.length)}
             icon="analytics"
             iconClass="text-primary"
           />
           <StatCard
             label="Incidents (30 days)"
-            value="2"
+            value={String(incidents30)}
             icon="warning"
             iconClass="text-error"
             glow="bg-error/10"
@@ -132,7 +136,7 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-card-border">
-                {dashboardMonitors.map((m) => (
+                {status.monitors.map((m) => (
                   <tr key={m.id} className="transition-colors hover:bg-surface-container-low/50">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
@@ -183,7 +187,7 @@ export default function DashboardPage() {
             </a>
           </div>
           <div className="flex flex-col divide-y divide-card-border rounded-xl border border-card-border bg-card">
-            {incidents.slice(0, 3).map((inc) => {
+            {status.incidents.slice(0, 3).map((inc) => {
               const latest = inc.updates[0];
               const danger = latest.tone === "danger";
               return (

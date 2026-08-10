@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { Modal } from "@/components/ui/modal";
 import { Field, inputClass } from "@/components/ui/field";
 import { useToast } from "@/components/ui/toast";
+import { intervalToSec } from "@/lib/interval";
 import type { Monitor } from "@/lib/data";
 
 const filters: { id: MonitorStatus | "all"; label: string }[] = [
@@ -16,10 +18,10 @@ const filters: { id: MonitorStatus | "all"; label: string }[] = [
 
 type MonitorStatus = "up" | "degraded" | "down";
 
-export function MonitorsList({ monitors: initial }: { monitors: Monitor[] }) {
-  const [monitors, setMonitors] = useState(initial);
+export function MonitorsList({ monitors }: { monitors: Monitor[] }) {
   const [filter, setFilter] = useState<MonitorStatus | "all">("all");
   const { show } = useToast();
+  const router = useRouter();
 
   /* Row action modal state */
   const [menuFor, setMenuFor] = useState<Monitor | null>(null);
@@ -33,34 +35,70 @@ export function MonitorsList({ monitors: initial }: { monitors: Monitor[] }) {
     setView("menu");
   };
 
-  const patch = (id: string, patch: Partial<Monitor>) => {
-    setMonitors((prev) => prev.map((m) => (m.id === id ? { ...m, ...patch } : m)));
-  };
-
-  const togglePause = (m: Monitor) => {
+  const togglePause = async (m: Monitor) => {
     const pausing = !m.paused;
-    patch(m.id, { paused: pausing, latencyMs: pausing ? null : m.latencyMs });
-    show(pausing ? `${m.name} paused` : `${m.name} resumed`, pausing ? "info" : "success");
-    setMenuFor(null);
+    try {
+      const res = await fetch(`/api/monitors/${m.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paused: pausing }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(payload?.error ?? "Failed to update monitor");
+      show(pausing ? `${m.name} paused` : `${m.name} resumed`, pausing ? "info" : "success");
+      setMenuFor(null);
+      router.refresh();
+    } catch (e) {
+      show(e instanceof Error ? e.message : "Could not update monitor", "error");
+    }
   };
 
-  const runCheck = (m: Monitor) => {
-    const latency = Math.floor(20 + Math.random() * 380);
-    patch(m.id, { latencyMs: latency });
-    show(`Check OK · ${latency}ms`, "success");
-    setMenuFor(null);
+  const runCheck = async (m: Monitor) => {
+    try {
+      const res = await fetch(`/api/monitors/${m.id}/check`, { method: "POST" });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(payload?.error ?? "Check failed");
+      if (payload?.status === "up") show(`Check OK · ${payload.latencyMs}ms`, "success");
+      else if (payload?.status === "degraded") show(`Check degraded · ${payload.latencyMs}ms`, "info");
+      else show(`Check failed · ${m.name} is down`, "error");
+      setMenuFor(null);
+      router.refresh();
+    } catch (e) {
+      show(e instanceof Error ? e.message : "Could not run check", "error");
+    }
   };
 
-  const deleteMonitor = (m: Monitor) => {
-    setMonitors((prev) => prev.filter((x) => x.id !== m.id));
-    show(`Monitor "${m.name}" deleted`, "info");
-    setMenuFor(null);
+  const deleteMonitor = async (m: Monitor) => {
+    try {
+      const res = await fetch(`/api/monitors/${m.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete monitor");
+      show(`Monitor "${m.name}" deleted`, "info");
+      setMenuFor(null);
+      router.refresh();
+    } catch (e) {
+      show(e instanceof Error ? e.message : "Could not delete monitor", "error");
+    }
   };
 
-  const saveEdit = (m: Monitor, fields: { name: string; url: string; interval: string }) => {
-    patch(m.id, fields);
-    show(`Monitor "${fields.name}" updated`);
-    setMenuFor(null);
+  const saveEdit = async (m: Monitor, fields: { name: string; url: string; interval: string }) => {
+    try {
+      const res = await fetch(`/api/monitors/${m.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: fields.name,
+          url: fields.url,
+          intervalSec: intervalToSec(fields.interval),
+        }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(payload?.error ?? "Failed to update monitor");
+      show(`Monitor "${fields.name}" updated`);
+      setMenuFor(null);
+      router.refresh();
+    } catch (e) {
+      show(e instanceof Error ? e.message : "Could not update monitor", "error");
+    }
   };
 
   return (
@@ -287,7 +325,9 @@ function EditFields({
       <Field label="CHECK INTERVAL">
         <select value={value.interval} onChange={(e) => onChange({ ...value, interval: e.target.value })} className={inputClass}>
           {["30s", "1m", "5m", "15m"].map((i) => (
-            <option key={i}>every {i}</option>
+            <option key={i} value={i}>
+              every {i}
+            </option>
           ))}
         </select>
       </Field>
