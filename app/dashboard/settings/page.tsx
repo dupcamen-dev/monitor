@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Container } from "@/components/container";
 import { Toggle } from "@/components/toggle";
-import { SettingsSaveBar } from "@/components/actions/settings-save-bar";
+import { WorkspaceSettings } from "@/components/actions/workspace-settings";
 import { DeleteOrganizationButton } from "@/components/actions/delete-organization-button";
+import { DarkModeToggle } from "@/components/actions/dark-mode-toggle";
 import { PlanSelector } from "@/components/actions/plan-selector";
 import { getOrgPlan } from "@/lib/queries";
 import { getUserOrg } from "@/lib/org";
@@ -13,20 +14,6 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
-
-function Field({ label, hint, value }: { label: string; hint?: string; value: string }) {
-  return (
-    <div>
-      <label className="mb-1 block font-mono text-code-label text-on-surface">{label}</label>
-      <input
-        type="text"
-        defaultValue={value}
-        className="w-full rounded border border-card-border bg-surface-container-lowest px-3 py-2 font-mono text-code-label text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-      />
-      {hint && <p className="mt-1.5 text-body-sm text-on-surface-variant">{hint}</p>}
-    </div>
-  );
-}
 
 export default async function SettingsPage() {
   const org = await getUserOrg();
@@ -49,23 +36,7 @@ export default async function SettingsPage() {
             <h2 className="mb-6 border-b border-card-border pb-3 text-headline-md text-on-surface">
               General
             </h2>
-            <div className="flex flex-col gap-5">
-              <Field label="ORGANIZATION NAME" value={org.name} />
-              <Field label="STATUS PAGE SLUG" value={org.slug} hint="Your public page will be at upstatus.dev/{slug}" />
-              <div>
-                <label className="mb-1 block font-mono text-code-label text-on-surface">TIMEZONE</label>
-                <select
-                  defaultValue="Europe/Kyiv"
-                  className="w-full rounded border border-card-border bg-surface-container-lowest px-3 py-2 font-mono text-code-label text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-                >
-                  <option>Europe/Kyiv</option>
-                  <option>Europe/London</option>
-                  <option>Europe/Berlin</option>
-                  <option>America/New_York</option>
-                  <option>Asia/Singapore</option>
-                </select>
-              </div>
-            </div>
+            <WorkspaceSettings name={org.name} slug={org.slug} timezone={org.timezone} />
           </section>
 
           {/* Plan */}
@@ -126,10 +97,10 @@ export default async function SettingsPage() {
               <div>
                 <p className="text-body-lg text-on-surface">Dark mode</p>
                 <p className="mt-1 font-mono text-code-label text-on-surface-variant">
-                  UpStatus is built dark-first for low-light environments.
+                  Choose between dark and light themes.
                 </p>
               </div>
-              <Toggle checked={true} label="Dark mode" />
+              <DarkModeToggle />
             </div>
           </section>
 
@@ -143,12 +114,10 @@ export default async function SettingsPage() {
                   This permanently removes all monitors and history.
                 </p>
               </div>
-              <DeleteOrganizationButton />
+              <DeleteOrganizationButton orgName={org.name} />
             </div>
           </section>
         </div>
-
-        <SettingsSaveBar />
       </Container>
     </div>
   );

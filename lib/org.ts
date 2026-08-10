@@ -8,6 +8,7 @@ export interface UserOrg {
   plan: OrgPlan;
   name: string;
   slug: string;
+  timezone: string;
 }
 
 function slugifyEmail(email: string): string {
@@ -26,7 +27,7 @@ export async function getUserOrg(): Promise<UserOrg | null> {
 
   const { data: existing } = await admin
     .from("organizations")
-    .select("id, plan, name, slug")
+    .select("id, plan, name, slug, timezone")
     .eq("owner_id", user.id)
     .maybeSingle();
 
@@ -36,6 +37,7 @@ export async function getUserOrg(): Promise<UserOrg | null> {
       plan: normalizePlan(existing.plan),
       name: existing.name,
       slug: existing.slug,
+      timezone: existing.timezone || "Europe/Kyiv",
     };
   }
 
@@ -51,7 +53,7 @@ export async function getUserOrg(): Promise<UserOrg | null> {
       slug: `${base}-${Math.random().toString(36).slice(2, 8)}`,
       plan: "free",
     })
-    .select("id, plan, name, slug")
+    .select("id, plan, name, slug, timezone")
     .single();
 
   if (error || !created) return null;
@@ -60,5 +62,6 @@ export async function getUserOrg(): Promise<UserOrg | null> {
     plan: normalizePlan(created.plan),
     name: created.name,
     slug: created.slug,
+    timezone: created.timezone || "Europe/Kyiv",
   };
 }

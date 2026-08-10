@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   /* ---- UpStatus design tokens (from DESIGN.md) ---- */
 
   /* Surfaces */
@@ -94,6 +94,57 @@
   --spacing-gutter: 24px;
   --spacing-margin-mobile: 16px;
   --spacing-margin-desktop: 40px;
+}
+
+/* Light theme — applied via html[data-theme="light"] */
+[data-theme="light"] {
+  --color-background: #f7f8fa;
+  --color-surface: #f7f8fa;
+  --color-surface-dim: #e8eaee;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f0f1f5;
+  --color-surface-container: #e7e9ef;
+  --color-surface-container-high: #dfe2e8;
+  --color-surface-container-highest: #d7dbe2;
+  --color-surface-variant: #d7dbe2;
+
+  --color-on-surface: #1b1c20;
+  --color-on-surface-variant: #4a4f5c;
+  --color-on-background: #1b1c20;
+
+  --color-outline: #6b7280;
+  --color-outline-variant: #c3c8d2;
+
+  --color-primary: #1a56c4;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #d7e2ff;
+  --color-on-primary-container: #0f3a8a;
+  --color-primary-fixed: #d7e2ff;
+  --color-primary-fixed-dim: #adc6ff;
+
+  --color-secondary: #0d7a5a;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #b6f5d8;
+  --color-on-secondary-container: #0b5c45;
+  --color-secondary-fixed: #c8fae3;
+  --color-secondary-fixed-dim: #8ff0c4;
+
+  --color-tertiary: #b23d28;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ffdad3;
+  --color-on-tertiary-container: #7c2a1a;
+
+  --color-error: #b3261e;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #8c1d18;
+
+  --color-card: #ffffff;
+  --color-card-border: #e2e5ea;
+
+  --color-up: #059669;
+  --color-down: #dc2626;
 }
 
 @layer base {
