@@ -63,9 +63,14 @@ function SidebarContent({
 
       <div className="mt-auto flex flex-col gap-2 border-t border-outline-variant pt-4 font-mono text-code-label">
         {userEmail && (
-          <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-            <Icon name="person" size={18} />
-            <span className="min-w-0 flex-1 truncate text-on-surface-variant">{userEmail}</span>
+          <div className="flex flex-col gap-1 rounded-lg px-3 py-2">
+            <span className="font-mono text-code-label text-on-surface-variant">Signed in as</span>
+            <div className="flex items-center gap-3">
+              <Icon name="person" size={18} />
+              <span className="min-w-0 flex-1 truncate font-mono text-code-label text-on-surface">
+                {userEmail}
+              </span>
+            </div>
           </div>
         )}
         <Link
