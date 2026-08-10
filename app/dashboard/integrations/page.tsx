@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/container";
 import { Icon } from "@/components/icon";
 import { ChannelCard } from "@/components/dashboard/channel-card";
+import { TelegramCard } from "@/components/dashboard/telegram-card";
 import { NotificationRules } from "@/components/dashboard/notification-rules";
 import { WebhookSettings } from "@/components/dashboard/webhook-settings";
 import { channels } from "@/lib/data";
@@ -33,9 +34,13 @@ export default function IntegrationsPage() {
                 Notification Channels
               </h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {channels.map((channel) => (
-                  <ChannelCard key={channel.id} channel={channel} />
-                ))}
+                {channels.map((channel) =>
+                  channel.id === "telegram" ? (
+                    <TelegramCard key={channel.id} channel={channel} />
+                  ) : (
+                    <ChannelCard key={channel.id} channel={channel} />
+                  )
+                )}
               </div>
             </section>
 
