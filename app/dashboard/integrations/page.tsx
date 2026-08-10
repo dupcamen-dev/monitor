@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/container";
 import { Icon } from "@/components/icon";
-import { ChannelCard } from "@/components/dashboard/channel-card";
 import { TelegramCard } from "@/components/dashboard/telegram-card";
+import { LinkedChannelCard } from "@/components/dashboard/linked-channel-card";
 import { NotificationRules } from "@/components/dashboard/notification-rules";
 import { WebhookSettings } from "@/components/dashboard/webhook-settings";
 import { channels } from "@/lib/data";
@@ -38,7 +38,7 @@ export default function IntegrationsPage() {
                   channel.id === "telegram" ? (
                     <TelegramCard key={channel.id} channel={channel} />
                   ) : (
-                    <ChannelCard key={channel.id} channel={channel} />
+                    <LinkedChannelCard key={channel.id} channel={channel} />
                   )
                 )}
               </div>

@@ -39,7 +39,7 @@ export interface Channel {
   id: string;
   name: string;
   color: string;
-  icon: "telegram" | "whatsapp" | "email" | "slack" | "webhook";
+  icon: "telegram" | "email" | "discord" | "webhook";
   connected: boolean;
   description: string;
   meta: string;
@@ -244,16 +244,7 @@ export const channels: Channel[] = [
     icon: "telegram",
     connected: true,
     description: "Get instant downtime and recovery alerts directly to your Telegram bot.",
-    meta: "@upstatus_bot",
-  },
-  {
-    id: "whatsapp",
-    name: "WhatsApp",
-    color: "#25D366",
-    icon: "whatsapp",
-    connected: false,
-    description: "Business notifications for your team via WhatsApp Business API.",
-    meta: "+380 00 000 0000",
+    meta: "@mytopstatus_bot",
   },
   {
     id: "email",
@@ -262,15 +253,15 @@ export const channels: Channel[] = [
     icon: "email",
     connected: true,
     description: "Plain-text and rich summary digests to any inbox.",
-    meta: "ops@acme.dev",
+    meta: "you@example.com",
   },
   {
-    id: "slack",
-    name: "Slack",
-    color: "#E01E5A",
-    icon: "slack",
+    id: "discord",
+    name: "Discord",
+    color: "#5865F2",
+    icon: "discord",
     connected: false,
-    description: "Post alerts to channels with custom emoji and mentions.",
-    meta: "#incidents",
+    description: "Post alerts to a Discord channel through an incoming webhook.",
+    meta: "#alerts",
   },
 ];

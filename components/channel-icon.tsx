@@ -10,17 +10,10 @@ export function ChannelIcon({ channel, size = 24 }: { channel: Channel; size?: n
       </svg>
     );
   }
-  if (channel.icon === "whatsapp") {
+  if (channel.icon === "discord") {
     return (
-      <svg fill="none" height={size} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width={size}>
-        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-      </svg>
-    );
-  }
-  if (channel.icon === "slack") {
-    return (
-      <svg fill="none" height={size} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width={size}>
-        <path d="M14.5 3a2 2 0 0 0-4 0v13a2 2 0 0 0 4 0V3zM19.5 10a2 2 0 1 0 0-4h-13a2 2 0 1 0 0 4h13zM9.5 21a2 2 0 0 0 4 0V8a2 2 0 0 0-4 0v13zM4.5 14a2 2 0 1 0 4 0v-13a2 2 0 1 0-4 0v13z" />
+      <svg fill="currentColor" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.27 18.27 0 0 0-5.5 0 13.8 13.8 0 0 0-.64-1.28 19.74 19.74 0 0 0-4.93 1.51C.53 9.05-.32 13.58.1 18.06a19.9 19.9 0 0 0 6.07 3.05 14.6 14.6 0 0 0 1.31-2.11 12.9 12.9 0 0 1-2.06-1 9.7 9.7 0 0 0 .5-.39 14.08 14.08 0 0 0 12.16 0c.17.14.34.27.5.39a12.9 12.9 0 0 1-2.07 1 14.6 14.6 0 0 0 1.31 2.11 19.88 19.88 0 0 0 6.07-3.05c.5-5.24-.84-9.72-3.58-13.69ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.09 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.09 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Z" />
       </svg>
     );
   }
