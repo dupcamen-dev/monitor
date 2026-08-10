@@ -153,7 +153,9 @@ export function AddMonitorButton({
             <Field label="CHECK INTERVAL">
               <select value={interval} onChange={(e) => setInterval(e.target.value)} className={inputClass}>
                 {intervals.map((i) => (
-                  <option key={i}>every {i}</option>
+                  <option key={i} value={i}>
+                    every {i}
+                  </option>
                 ))}
               </select>
             </Field>
