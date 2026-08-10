@@ -34,6 +34,29 @@ const placeholders: Record<string, { label: string; placeholder: string; hint: s
   },
 };
 
+const discordSteps = [
+  {
+    title: "Open Discord",
+    body: "Sign in to Discord on desktop or in the browser. If you have no server, click the + icon on the left and choose “Create My Own” — it takes under a minute.",
+  },
+  {
+    title: "Open your channel",
+    body: "Go to the text channel where you want alerts (for example #alerts). You can create a new channel with the + next to “Text Channels”.",
+  },
+  {
+    title: "Create a webhook",
+    body: "Right-click the channel → Edit Channel → Integrations → Webhooks → New Webhook. Give it a name (e.g. “UpStatus Alerts”).",
+  },
+  {
+    title: "Copy the URL",
+    body: "Click “Copy Webhook URL” — it looks like https://discord.com/api/webhooks/<ID>/<TOKEN>. You need the “Manage Webhooks” permission; server owners have it by default.",
+  },
+  {
+    title: "Paste and connect",
+    body: "Paste the copied URL into the field below and click Save, then press Test to send a confirmation message to the channel.",
+  },
+];
+
 export function LinkedChannelCard({ channel }: { channel: Channel }) {
   const [state, setState] = useState<CardState>({ status: "loading" });
   const [busy, setBusy] = useState(false);
@@ -244,6 +267,30 @@ export function LinkedChannelCard({ channel }: { channel: Channel }) {
               autoFocus
             />
           </Field>
+        )}
+
+        {channel.id === "discord" && (
+          <details className="group rounded-lg border border-card-border bg-surface-container-lowest">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-mono text-code-label text-on-surface transition-colors hover:text-primary">
+              <span className="flex items-center gap-2">
+                <Icon name="help_outline" size={16} />
+                How to get a Discord webhook URL
+              </span>
+              <Icon name="expand_more" size={16} className="transition-transform group-open:rotate-180" />
+            </summary>
+            <ol className="flex flex-col gap-3 border-t border-card-border px-4 py-4">
+              {discordSteps.map((step, i) => (
+                <li key={step.title} className="flex gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 font-mono text-code-label text-primary">
+                    {i + 1}
+                  </span>
+                  <p className="font-mono text-code-label text-on-surface-variant">
+                    <span className="text-on-surface">{step.title}.</span> {step.body}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </details>
         )}
       </Modal>
     </div>
