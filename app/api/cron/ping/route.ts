@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   const expiredOrgs: string[] = [];
   for (const org of orgs ?? []) {
     let plan = org.plan;
-    if (plan === "yearly") {
+    if (plan === "yearly" || plan === "paid") {
       const expires = org.plan_expires_at ? new Date(org.plan_expires_at).getTime() : 0;
       if (expires && expires < nowMs) {
         expiredOrgs.push(org.id);

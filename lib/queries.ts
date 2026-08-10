@@ -21,6 +21,7 @@ type DbMonitor = {
 
 export type OrgPlan = "free" | "paid" | "yearly";
 
+export const PLAN_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 export const PLAN_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 export function normalizePlan(value: unknown): OrgPlan {
@@ -44,7 +45,7 @@ export async function getOrgPlanInfo(orgId: string): Promise<OrgPlanInfo> {
     .eq("id", orgId)
     .single();
 
-  if (data?.plan === "yearly") {
+  if (data?.plan === "yearly" || data?.plan === "paid") {
     const expires = data.plan_expires_at ? new Date(data.plan_expires_at).getTime() : 0;
     if (expires && expires < Date.now()) {
       await supabase
@@ -53,7 +54,7 @@ export async function getOrgPlanInfo(orgId: string): Promise<OrgPlanInfo> {
         .eq("id", orgId);
       return { plan: "free", expiresAt: null };
     }
-    return { plan: "yearly", expiresAt: data.plan_expires_at ?? null };
+    return { plan: data.plan, expiresAt: data.plan_expires_at ?? null };
   }
   return { plan: normalizePlan(data?.plan), expiresAt: data?.plan_expires_at ?? null };
 }

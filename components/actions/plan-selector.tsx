@@ -19,7 +19,7 @@ const plans: { key: PlanKey; name: string; price: string; cadence: string; desc:
     name: "Paid",
     price: "$19/mo",
     cadence: "checks every 5 minutes",
-    desc: "Faster detection with 5-minute checks and full history.",
+    desc: "Faster detection with 5-minute checks. Auto-expires after 1 month.",
   },
   {
     key: "yearly",

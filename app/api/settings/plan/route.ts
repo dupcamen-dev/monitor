@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase";
 import { getUserOrgId } from "@/lib/auth-org";
-import { normalizePlan, PLAN_YEAR_MS } from "@/lib/queries";
+import { normalizePlan, PLAN_MONTH_MS, PLAN_YEAR_MS } from "@/lib/queries";
 import type { OrgPlan } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +23,7 @@ export async function GET() {
 
   const plan = normalizePlan(data?.plan);
   let expiresAt: string | null = null;
-  if (plan === "yearly" && data?.plan_expires_at) {
+  if ((plan === "paid" || plan === "yearly") && data?.plan_expires_at) {
     expiresAt = new Date(data.plan_expires_at).getTime() < Date.now() ? null : data.plan_expires_at;
   }
   return NextResponse.json({ plan, expiresAt });
@@ -41,7 +41,9 @@ export async function PATCH(request: Request) {
 
   const supabase = createAdminClient();
   const patch: { plan: OrgPlan; plan_expires_at: string | null } = { plan, plan_expires_at: null };
-  if (plan === "yearly") {
+  if (plan === "paid") {
+    patch.plan_expires_at = new Date(Date.now() + PLAN_MONTH_MS).toISOString();
+  } else if (plan === "yearly") {
     patch.plan_expires_at = new Date(Date.now() + PLAN_YEAR_MS).toISOString();
   }
 
