@@ -7,6 +7,7 @@ import { Icon } from "@/components/icon";
 import { Logo } from "@/components/logo";
 import { AddMonitorButton } from "@/components/actions/add-monitor-button";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import type { OrgPlan } from "@/lib/queries";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: "dashboard" },
@@ -21,13 +22,58 @@ function isActive(href: string, pathname: string) {
   return pathname.startsWith(href);
 }
 
+const PLAN_LABEL: Record<OrgPlan, string> = {
+  free: "Free",
+  paid: "Paid",
+  yearly: "Yearly",
+};
+
+const PLAN_BADGE: Record<OrgPlan, string> = {
+  free: "border border-card-border text-on-surface-variant",
+  paid: "bg-primary/10 text-primary",
+  yearly: "bg-secondary/15 text-secondary",
+};
+
+function formatDate(iso: string): string {
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(
+    new Date(iso)
+  );
+}
+
+function PlanBadge({ plan, planExpiresAt }: { plan: OrgPlan; planExpiresAt: string | null }) {
+  return (
+    <Link
+      href="/dashboard/settings"
+      className="flex flex-col gap-2 rounded-lg border border-card-border bg-surface-container-lowest p-3 transition-colors hover:border-surface-variant"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-mono text-code-label text-on-surface-variant">Plan</span>
+        <span className={`rounded px-2 py-0.5 font-mono text-code-label ${PLAN_BADGE[plan]}`}>
+          {PLAN_LABEL[plan]}
+        </span>
+      </div>
+      {planExpiresAt ? (
+        <span className="font-mono text-code-label text-on-surface-variant">
+          Expires {formatDate(planExpiresAt)}
+        </span>
+      ) : (
+        <span className="font-mono text-code-label text-primary">Manage plan →</span>
+      )}
+    </Link>
+  );
+}
+
 function SidebarContent({
   pathname,
   userEmail,
+  plan,
+  planExpiresAt,
   onNavigate,
 }: {
   pathname: string;
   userEmail?: string | null;
+  plan: OrgPlan;
+  planExpiresAt: string | null;
   onNavigate?: () => void;
 }) {
   return (
@@ -62,6 +108,7 @@ function SidebarContent({
       </div>
 
       <div className="mt-auto flex flex-col gap-2 border-t border-outline-variant pt-4 font-mono text-code-label">
+        <PlanBadge plan={plan} planExpiresAt={planExpiresAt} />
         {userEmail && (
           <div className="flex flex-col gap-1 rounded-lg px-3 py-2">
             <span className="font-mono text-code-label text-on-surface-variant">Signed in as</span>
@@ -90,9 +137,13 @@ function SidebarContent({
 export function DashboardShell({
   children,
   userEmail,
+  plan,
+  planExpiresAt,
 }: {
   children: React.ReactNode;
   userEmail?: string | null;
+  plan: OrgPlan;
+  planExpiresAt: string | null;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -100,7 +151,7 @@ export function DashboardShell({
   return (
     <div className="min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-outline-variant bg-surface-container-lowest p-4 md:flex">
-        <SidebarContent pathname={pathname} userEmail={userEmail} />
+        <SidebarContent pathname={pathname} userEmail={userEmail} plan={plan} planExpiresAt={planExpiresAt} />
       </aside>
 
       {open && (
@@ -123,7 +174,13 @@ export function DashboardShell({
             <Icon name="close" size={20} />
           </button>
         </div>
-        <SidebarContent pathname={pathname} userEmail={userEmail} onNavigate={() => setOpen(false)} />
+        <SidebarContent
+          pathname={pathname}
+          userEmail={userEmail}
+          plan={plan}
+          planExpiresAt={planExpiresAt}
+          onNavigate={() => setOpen(false)}
+        />
       </aside>
 
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-outline-variant bg-background/80 px-margin-mobile py-3 backdrop-blur-md md:hidden">

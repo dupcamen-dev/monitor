@@ -31,7 +31,12 @@ export function planCheckIntervalSec(plan: OrgPlan): number {
   return plan === "free" ? 3600 : 300;
 }
 
-export async function getOrgPlan(orgId: string): Promise<OrgPlan> {
+export interface OrgPlanInfo {
+  plan: OrgPlan;
+  expiresAt: string | null;
+}
+
+export async function getOrgPlanInfo(orgId: string): Promise<OrgPlanInfo> {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("organizations")
@@ -46,11 +51,15 @@ export async function getOrgPlan(orgId: string): Promise<OrgPlan> {
         .from("organizations")
         .update({ plan: "free", plan_expires_at: null })
         .eq("id", orgId);
-      return "free";
+      return { plan: "free", expiresAt: null };
     }
-    return "yearly";
+    return { plan: "yearly", expiresAt: data.plan_expires_at ?? null };
   }
-  return normalizePlan(data?.plan);
+  return { plan: normalizePlan(data?.plan), expiresAt: data?.plan_expires_at ?? null };
+}
+
+export async function getOrgPlan(orgId: string): Promise<OrgPlan> {
+  return (await getOrgPlanInfo(orgId)).plan;
 }
 
 async function fetchMonitorRows(orgId: string): Promise<DbMonitor[]> {

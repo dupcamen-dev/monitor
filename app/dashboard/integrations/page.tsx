@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/container";
-import { Icon } from "@/components/icon";
 import { TelegramCard } from "@/components/dashboard/telegram-card";
 import { LinkedChannelCard } from "@/components/dashboard/linked-channel-card";
-import { NotificationRules } from "@/components/dashboard/notification-rules";
 import { WebhookSettings } from "@/components/dashboard/webhook-settings";
 import { channels } from "@/lib/data";
 
@@ -20,8 +18,7 @@ export default function IntegrationsPage() {
             Integrations &amp; Notifications
           </h1>
           <p className="mt-2 max-w-2xl text-body-lg text-on-surface-variant">
-            Configure communication channels to receive critical system status alerts. Manage rules and
-            webhooks.
+            Configure communication channels and webhooks to receive critical system status alerts.
           </p>
         </header>
 
@@ -43,29 +40,11 @@ export default function IntegrationsPage() {
                 )}
               </div>
             </section>
-
-            {/* Rules */}
-            <NotificationRules />
           </div>
 
           {/* Right column */}
           <div className="space-y-6">
-            {/* Webhooks */}
             <WebhookSettings />
-
-            {/* Docs promo */}
-            <div className="flex items-start gap-4 rounded-lg border border-card-border bg-gradient-to-br from-card to-surface p-4">
-              <Icon name="book" size={20} className="text-outline" />
-              <div>
-                <h4 className="mb-1 text-body-sm font-bold text-on-surface">API Documentation</h4>
-                <p className="mb-2 font-mono text-code-label text-on-surface-variant">
-                  Explore the JSON payload format for integration with your own systems.
-                </p>
-                <a href="#" className="font-mono text-code-label text-primary hover:underline">
-                  Read Docs →
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </Container>

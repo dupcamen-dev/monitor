@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase";
 import { pingUrl } from "@/lib/ping";
 import { notifySubscribers } from "@/lib/notify";
+import { deliverWebhook } from "@/lib/webhooks";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -98,6 +99,15 @@ export async function POST(request: Request) {
           tone: "danger",
           body: `${monitor.name} is unreachable: ${result.error ?? `HTTP ${result.responseCode}`}`,
         });
+        await deliverWebhook({
+          orgId: monitor.org_id,
+          event: "monitor.down",
+          monitor: { id: monitor.id, name: monitor.name, kind: monitor.kind, url: monitor.url },
+          incident: { id: inc.id, title: inc.title, status: inc.status, impact: inc.impact, started_at: inc.started_at },
+          error: result.error,
+          latencyMs: result.latencyMs,
+          responseCode: result.responseCode,
+        });
       }
     }
 
@@ -127,6 +137,14 @@ export async function POST(request: Request) {
             incident_id: openId,
             tone: "success",
             body: `${monitor.name} is back online.`,
+          });
+          await deliverWebhook({
+            orgId: monitor.org_id,
+            event: "monitor.up",
+            monitor: { id: monitor.id, name: monitor.name, kind: monitor.kind, url: monitor.url },
+            incident: { id: openId, title: `${monitor.name} is down`, status: "resolved", impact: "major", started_at: now },
+            latencyMs: result.latencyMs,
+            responseCode: result.responseCode,
           });
         }
       }

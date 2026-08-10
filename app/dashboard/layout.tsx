@@ -1,5 +1,7 @@
 import { DashboardShell } from "@/components/dashboard/shell";
 import { createServerClientSSR } from "@/lib/supabase/auth";
+import { getUserOrg } from "@/lib/org";
+import { getOrgPlanInfo } from "@/lib/queries";
 
 export const metadata = {
   title: "Dashboard",
@@ -13,5 +15,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
     data: { user },
   } = await supabase.auth.getUser();
 
-  return <DashboardShell userEmail={user?.email}>{children}</DashboardShell>;
+  const org = await getUserOrg();
+  const planInfo = org ? await getOrgPlanInfo(org.id) : { plan: "free" as const, expiresAt: null };
+
+  return (
+    <DashboardShell userEmail={user?.email} plan={planInfo.plan} planExpiresAt={planInfo.expiresAt}>
+      {children}
+    </DashboardShell>
+  );
 }
