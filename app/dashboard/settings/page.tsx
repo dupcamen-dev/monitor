@@ -3,10 +3,14 @@ import { Container } from "@/components/container";
 import { Toggle } from "@/components/toggle";
 import { SettingsSaveBar } from "@/components/actions/settings-save-bar";
 import { DeleteOrganizationButton } from "@/components/actions/delete-organization-button";
+import { PlanSelector } from "@/components/actions/plan-selector";
+import { getOrgPlan } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Settings",
 };
+
+export const dynamic = "force-dynamic";
 
 function Field({ label, hint, value }: { label: string; hint?: string; value: string }) {
   return (
@@ -22,7 +26,9 @@ function Field({ label, hint, value }: { label: string; hint?: string; value: st
   );
 }
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const plan = await getOrgPlan();
+
   return (
     <div className="p-margin-mobile py-10 md:p-margin-desktop">
       <Container className="!p-0">
@@ -55,6 +61,19 @@ export default function SettingsPage() {
                   <option>Asia/Singapore</option>
                 </select>
               </div>
+            </div>
+          </section>
+
+          {/* Plan */}
+          <section className="rounded-xl border border-card-border bg-card p-6">
+            <h2 className="mb-6 border-b border-card-border pb-3 text-headline-md text-on-surface">
+              Plan
+            </h2>
+            <div className="flex flex-col gap-5">
+              <p className="text-body-sm text-on-surface-variant">
+                Your plan sets how often UpStatus checks your monitors.
+              </p>
+              <PlanSelector plan={plan} />
             </div>
           </section>
 

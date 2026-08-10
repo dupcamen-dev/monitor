@@ -19,6 +19,14 @@ export async function POST(request: Request) {
 
   const supabase = createAdminClient();
   const now = new Date().toISOString();
+  const nowMs = Date.now();
+
+  const { data: org } = await supabase
+    .from("organizations")
+    .select("plan")
+    .eq("id", DEFAULT_ORG_ID)
+    .single();
+  const checkEveryMs = (org?.plan === "paid" ? 5 : 60) * 60 * 1000;
 
   const { data: monitors } = await supabase
     .from("monitors")
@@ -27,12 +35,19 @@ export async function POST(request: Request) {
     .eq("paused", false);
 
   let checked = 0;
+  let skipped = 0;
   let downCount = 0;
   let created = 0;
   let resolved = 0;
   const newIncidents: string[] = [];
 
   for (const monitor of monitors ?? []) {
+    const last = monitor.last_checked_at ? new Date(monitor.last_checked_at).getTime() : 0;
+    if (last && nowMs - last < checkEveryMs) {
+      skipped += 1;
+      continue;
+    }
+
     const result = await pingUrl(monitor.url);
     checked += 1;
     if (result.status !== "up") downCount += 1;
@@ -103,7 +118,7 @@ export async function POST(request: Request) {
 
     await supabase
       .from("monitors")
-      .update({ status: result.status, latency_ms: result.latencyMs, updated_at: now })
+      .update({ status: result.status, latency_ms: result.latencyMs, last_checked_at: now, updated_at: now })
       .eq("id", monitor.id);
   }
 
@@ -111,5 +126,5 @@ export async function POST(request: Request) {
     await notifySubscribers("New incidents", newIncidents.join(", "));
   }
 
-  return NextResponse.json({ ok: true, checked, down: downCount, created, resolved });
+  return NextResponse.json({ ok: true, checked, skipped, down: downCount, created, resolved });
 }

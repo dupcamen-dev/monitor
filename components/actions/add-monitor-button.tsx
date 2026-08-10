@@ -7,7 +7,6 @@ import { Modal } from "@/components/ui/modal";
 import { Field, inputClass } from "@/components/ui/field";
 import { Toggle } from "@/components/toggle";
 import { useToast } from "@/components/ui/toast";
-import { intervalToSec } from "@/lib/interval";
 import type { MonitorKind } from "@/lib/data";
 
 const monitorTypes: { label: string; kind: MonitorKind }[] = [
@@ -17,13 +16,10 @@ const monitorTypes: { label: string; kind: MonitorKind }[] = [
   { label: "Dashboard / App", kind: "dashboard" },
 ];
 
-const intervals = ["30s", "1m", "5m", "15m"];
-
 export interface NewMonitorPayload {
   name: string;
   url: string;
   kind: MonitorKind;
-  interval: string;
   notify: boolean;
 }
 
@@ -31,6 +27,7 @@ interface AddMonitorButtonProps {
   label?: string;
   variant?: "primary" | "secondary";
   className?: string;
+  checkInterval?: string;
   onCreated?: (monitor: NewMonitorPayload) => void;
 }
 
@@ -38,6 +35,7 @@ export function AddMonitorButton({
   label = "New monitor",
   variant = "primary",
   className = "",
+  checkInterval,
   onCreated,
 }: AddMonitorButtonProps) {
   const [open, setOpen] = useState(false);
@@ -47,7 +45,6 @@ export function AddMonitorButton({
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [typeLabel, setTypeLabel] = useState(monitorTypes[0].label);
-  const [interval, setInterval] = useState("1m");
   const [notify, setNotify] = useState(true);
   const [error, setError] = useState("");
 
@@ -55,7 +52,6 @@ export function AddMonitorButton({
     setName("");
     setUrl("");
     setTypeLabel(monitorTypes[0].label);
-    setInterval("1m");
     setNotify(true);
     setError("");
   };
@@ -78,11 +74,11 @@ export function AddMonitorButton({
       const res = await fetch("/api/monitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), url: url.trim(), kind, intervalSec: intervalToSec(interval) }),
+        body: JSON.stringify({ name: name.trim(), url: url.trim(), kind }),
       });
       const payload = await res.json().catch(() => null);
       if (!res.ok) throw new Error(payload?.error ?? "Failed to create monitor");
-      onCreated?.({ name: name.trim(), url: url.trim(), kind, interval, notify });
+      onCreated?.({ name: name.trim(), url: url.trim(), kind, notify });
       show(`Monitor "${name.trim()}" created`);
       setOpen(false);
       reset();
@@ -150,14 +146,13 @@ export function AddMonitorButton({
                 ))}
               </select>
             </Field>
-            <Field label="CHECK INTERVAL">
-              <select value={interval} onChange={(e) => setInterval(e.target.value)} className={inputClass}>
-                {intervals.map((i) => (
-                  <option key={i} value={i}>
-                    every {i}
-                  </option>
-                ))}
-              </select>
+            <Field label="CHECK CADENCE" hint="Set by your plan.">
+              <input
+                type="text"
+                value={checkInterval ? `every ${checkInterval}` : "—"}
+                readOnly
+                className={`${inputClass} cursor-not-allowed opacity-70`}
+              />
             </Field>
           </div>
           <div className="flex items-center justify-between gap-4 rounded-lg border border-card-border bg-surface-container-lowest p-4">

@@ -4,7 +4,8 @@ import { StatusCode } from "@/components/status-badge";
 import { LiveClock } from "@/components/live-clock";
 import { AddMonitorButton } from "@/components/actions/add-monitor-button";
 import { uptimePct } from "@/lib/data";
-import { getStatus } from "@/lib/queries";
+import { getStatus, getOrgPlan, planCheckIntervalSec } from "@/lib/queries";
+import { secToInterval } from "@/lib/interval";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,8 @@ function StatCard({
 }
 
 export default async function DashboardPage() {
-  const status = await getStatus();
+  const [status, plan] = await Promise.all([getStatus(), getOrgPlan()]);
+  const checkInterval = secToInterval(planCheckIntervalSec(plan));
   const overallHistory = status.monitors.flatMap((m) => m.history);
   const overall = uptimePct(overallHistory);
   const incidents30 = status.incidents30;
@@ -79,7 +81,7 @@ export default async function DashboardPage() {
               Overview of your services and monitors.
             </p>
           </div>
-          <AddMonitorButton />
+          <AddMonitorButton checkInterval={checkInterval} />
         </header>
 
         {/* Overall status banner */}

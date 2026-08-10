@@ -19,6 +19,22 @@ type DbMonitor = {
   created_at: string;
 };
 
+export type OrgPlan = "free" | "paid";
+
+export function planCheckIntervalSec(plan: OrgPlan): number {
+  return plan === "paid" ? 300 : 3600;
+}
+
+export async function getOrgPlan(): Promise<OrgPlan> {
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from("organizations")
+    .select("plan")
+    .eq("id", DEFAULT_ORG_ID)
+    .single();
+  return data?.plan === "paid" ? "paid" : "free";
+}
+
 async function fetchMonitorRows(): Promise<DbMonitor[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -62,7 +78,8 @@ for (let i = DAYS - 1; i >= 0; i--) {
 
 function buildMonitor(
   r: DbMonitor,
-  map: Map<string, DayState>
+  map: Map<string, DayState>,
+  cadenceSec: number
 ): Monitor {
   const history = historyDays.map((day) => map.get(day) ?? "nodata");
   const withData = history.filter((s) => s !== "nodata");
@@ -82,14 +99,15 @@ function buildMonitor(
     uptime30: uptime(withData.slice(-30)),
     uptime90: uptime(withData),
     history,
-    interval: secToInterval(r.interval_sec),
+    interval: secToInterval(cadenceSec),
     paused: r.paused,
   };
 }
 
 export async function getMonitors(): Promise<Monitor[]> {
-  const [rows, byMonitor] = await Promise.all([fetchMonitorRows(), fetchHistoryByMonitor()]);
-  return rows.map((r) => buildMonitor(r, byMonitor.get(r.id) ?? new Map()));
+  const [rows, byMonitor, plan] = await Promise.all([fetchMonitorRows(), fetchHistoryByMonitor(), getOrgPlan()]);
+  const cadenceSec = planCheckIntervalSec(plan);
+  return rows.map((r) => buildMonitor(r, byMonitor.get(r.id) ?? new Map(), cadenceSec));
 }
 
 export async function getMonitorOptions(): Promise<{ id: string; name: string }[]> {

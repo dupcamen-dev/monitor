@@ -29,7 +29,12 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
 
   await supabase
     .from("monitors")
-    .update({ status: result.status, latency_ms: result.latencyMs, updated_at: new Date().toISOString() })
+    .update({
+      status: result.status,
+      latency_ms: result.latencyMs,
+      last_checked_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id);
 
   return NextResponse.json({ monitor_id: id, ...result });

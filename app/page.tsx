@@ -187,35 +187,30 @@ export default function HomePage() {
         <section id="pricing" className="py-16">
           <Container>
             <h2 className="mb-12 text-center text-headline-md text-on-surface">Simple, honest pricing</h2>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
               {[
                 {
                   name: "Free",
                   price: "$0",
                   tagline: "For side projects",
+                  cadence: "Checks every 1 hour",
                   cta: "Start for free",
-                  features: ["5 monitors", "1 status page", "5-minute checks", "Email alerts"],
+                  features: ["Unlimited monitors", "1 status page", "Hourly checks", "Email alerts"],
                 },
                 {
-                  name: "Pro",
-                  price: "$12",
-                  tagline: "For growing teams",
+                  name: "Paid",
+                  price: "$19",
+                  tagline: "For teams that need speed",
+                  cadence: "Checks every 5 minutes",
                   cta: "Start 14-day trial",
                   features: [
-                    "50 monitors",
-                    "Unlimited status pages",
-                    "1-minute checks",
-                    "Telegram & WhatsApp alerts",
+                    "Unlimited monitors",
+                    "1 status page",
+                    "5-minute checks",
+                    "Telegram & email alerts",
                     "90-day history",
                   ],
                   featured: true,
-                },
-                {
-                  name: "Team",
-                  price: "$29",
-                  tagline: "For organizations",
-                  cta: "Contact sales",
-                  features: ["500 monitors", "Global probe locations", "SSO & roles", "Priority support", "SLA"],
                 },
               ].map((plan) => (
                 <div
@@ -240,6 +235,10 @@ export default function HomePage() {
                       <span className="font-mono text-code-label text-on-surface-variant">/ month</span>
                     </div>
                     <p className="mt-1 text-body-sm text-on-surface-variant">{plan.tagline}</p>
+                    <p className="mt-3 inline-flex items-center gap-2 rounded bg-surface-container-lowest px-3 py-1.5 font-mono text-code-label text-primary">
+                      <Icon name="sensors" size={16} />
+                      {plan.cadence}
+                    </p>
                   </div>
                   <ul className="mb-8 flex flex-col gap-3">
                     {plan.features.map((f) => (

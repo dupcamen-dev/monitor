@@ -6,7 +6,6 @@ import { Icon } from "@/components/icon";
 import { Modal } from "@/components/ui/modal";
 import { Field, inputClass } from "@/components/ui/field";
 import { useToast } from "@/components/ui/toast";
-import { intervalToSec } from "@/lib/interval";
 import type { Monitor } from "@/lib/data";
 
 const filters: { id: MonitorStatus | "all"; label: string }[] = [
@@ -26,7 +25,7 @@ export function MonitorsList({ monitors }: { monitors: Monitor[] }) {
   /* Row action modal state */
   const [menuFor, setMenuFor] = useState<Monitor | null>(null);
   const [view, setView] = useState<"menu" | "edit" | "delete">("menu");
-  const [editDraft, setEditDraft] = useState({ name: "", url: "", interval: "" });
+  const [editDraft, setEditDraft] = useState({ name: "", url: "" });
 
   const filtered = filter === "all" ? monitors : monitors.filter((m) => m.status === filter);
 
@@ -80,16 +79,12 @@ export function MonitorsList({ monitors }: { monitors: Monitor[] }) {
     }
   };
 
-  const saveEdit = async (m: Monitor, fields: { name: string; url: string; interval: string }) => {
+  const saveEdit = async (m: Monitor, fields: { name: string; url: string }) => {
     try {
       const res = await fetch(`/api/monitors/${m.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: fields.name,
-          url: fields.url,
-          intervalSec: intervalToSec(fields.interval),
-        }),
+        body: JSON.stringify({ name: fields.name, url: fields.url }),
       });
       const payload = await res.json().catch(() => null);
       if (!res.ok) throw new Error(payload?.error ?? "Failed to update monitor");
@@ -238,7 +233,7 @@ export function MonitorsList({ monitors }: { monitors: Monitor[] }) {
               icon="edit"
               label="Edit monitor"
               onClick={() => {
-                setEditDraft({ name: menuFor.name, url: menuFor.url, interval: menuFor.interval });
+                setEditDraft({ name: menuFor.name, url: menuFor.url });
                 setView("edit");
               }}
             />
@@ -311,8 +306,8 @@ function EditFields({
   value,
   onChange,
 }: {
-  value: { name: string; url: string; interval: string };
-  onChange: (v: { name: string; url: string; interval: string }) => void;
+  value: { name: string; url: string };
+  onChange: (v: { name: string; url: string }) => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -322,15 +317,9 @@ function EditFields({
       <Field label="TARGET">
         <input type="text" value={value.url} onChange={(e) => onChange({ ...value, url: e.target.value })} className={inputClass} />
       </Field>
-      <Field label="CHECK INTERVAL">
-        <select value={value.interval} onChange={(e) => onChange({ ...value, interval: e.target.value })} className={inputClass}>
-          {["30s", "1m", "5m", "15m"].map((i) => (
-            <option key={i} value={i}>
-              every {i}
-            </option>
-          ))}
-        </select>
-      </Field>
+      <p className="font-mono text-code-label text-on-surface-variant">
+        Check cadence is set by your plan.
+      </p>
     </div>
   );
 }
