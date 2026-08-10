@@ -1,4 +1,4 @@
--- UpStatus schema (Supabase / PostgreSQL)
+-- TopStatus schema (Supabase / PostgreSQL)
 
 create extension if not exists "pgcrypto";
 
@@ -71,7 +71,7 @@ create table if not exists public.subscriptions (
 
 -- seed default org + a few sample monitors (real HTTP targets so the cron can ping them)
 insert into public.organizations (id, name, slug)
-values ('00000000-0000-0000-0000-000000000001', 'UpStatus', 'upstatus')
+values ('00000000-0000-0000-0000-000000000001', 'TopStatus', 'topstatus')
 on conflict (id) do nothing;
 
 insert into public.monitors (id, org_id, name, kind, url, interval_sec)

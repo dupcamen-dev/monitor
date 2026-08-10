@@ -132,7 +132,7 @@ export function AddMonitorButton({
               autoFocus
             />
           </Field>
-          <Field label="TARGET" hint="The address UpStatus will check on every interval.">
+          <Field label="TARGET" hint="The address TopStatus will check on every interval.">
             <input
               type="text"
               value={url}

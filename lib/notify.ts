@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase";
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN ?? "";
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "UpStatus <onboarding@resend.dev>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "TopStatus <onboarding@resend.dev>";
 
 async function sendTelegram(chatId: string, text: string): Promise<boolean> {
   if (!BOT_TOKEN) return false;
@@ -66,7 +66,7 @@ export async function notifySubscribers(orgId: string, title: string, body: stri
       const text = `**${title}**\n\n${body}`;
       if (await sendDiscord(sub.target, text)) sent += 1;
     } else if (sub.channel === "email") {
-      if (await sendEmail(sub.target, `UpStatus · ${title}`, body)) sent += 1;
+      if (await sendEmail(sub.target, `TopStatus · ${title}`, body)) sent += 1;
     }
   }
   return sent;
@@ -78,10 +78,10 @@ export async function sendTelegramMessage(chatId: string, text: string) {
 
 export async function sendTestAlert(channel: string, target: string): Promise<boolean> {
   if (channel === "email") {
-    return sendEmail(target, "UpStatus · Test alert", "✅ This is a test alert from UpStatus. Your channel is connected and working.");
+    return sendEmail(target, "TopStatus · Test alert", "✅ This is a test alert from TopStatus. Your channel is connected and working.");
   }
   if (channel === "discord") {
-    return sendDiscord(target, "**✅ Test alert**\nThis is a test alert from UpStatus. Your channel is connected and working.");
+    return sendDiscord(target, "**✅ Test alert**\nThis is a test alert from TopStatus. Your channel is connected and working.");
   }
   return false;
 }

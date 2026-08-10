@@ -51,9 +51,9 @@ async function postJson(url: string, secret: string, payload: string): Promise<b
   try {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      "User-Agent": "UpStatus/1.0",
+      "User-Agent": "TopStatus/1.0",
     };
-    if (secret) headers["X-UpStatus-Signature"] = `sha256=${sign(secret, payload)}`;
+    if (secret) headers["X-TopStatus-Signature"] = `sha256=${sign(secret, payload)}`;
     const res = await fetch(url, {
       method: "POST",
       headers,
@@ -110,7 +110,7 @@ export async function sendTestWebhook(url: string, secret: string): Promise<bool
     latency_ms: 124,
     response_code: 200,
     timestamp: new Date().toISOString(),
-    message: "This is a test payload from UpStatus.",
+    message: "This is a test payload from TopStatus.",
   });
   return postJson(url, secret || "", payload);
 }

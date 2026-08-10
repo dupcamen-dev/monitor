@@ -206,7 +206,7 @@ export function WebhookSettings() {
         }
       >
         <div className="flex flex-col gap-5">
-          <Field label="URL ENDPOINT" hint="Example: https://your-server.com/upstatus-hook or a Make.com webhook URL.">
+          <Field label="URL ENDPOINT" hint="Example: https://your-server.com/topstatus-hook or a Make.com webhook URL.">
             <input
               type="text"
               value={draftUrl}
@@ -216,7 +216,7 @@ export function WebhookSettings() {
               autoFocus
             />
           </Field>
-          <Field label="SECRET KEY (optional)" hint="Sent as an X-UpStatus-Signature header (SHA-256 HMAC) on every request.">
+          <Field label="SECRET KEY (optional)" hint="Sent as an X-TopStatus-Signature header (SHA-256 HMAC) on every request.">
             <input
               type="text"
               value={draftSecret}

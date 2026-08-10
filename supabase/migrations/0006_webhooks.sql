@@ -1,4 +1,4 @@
--- UpStatus webhooks: deliver JSON payloads to an external HTTP endpoint on status changes.
+-- TopStatus webhooks: deliver JSON payloads to an external HTTP endpoint on status changes.
 -- One webhook per organization (the integrations page configures a single URL + secret).
 
 create table if not exists public.webhooks (

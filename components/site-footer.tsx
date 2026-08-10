@@ -20,7 +20,20 @@ export function SiteFooter() {
             </Link>
           ))}
         </nav>
-        <div className="text-body-sm text-on-surface-variant">© 2024 UpStatus Monitoring. All rights reserved.</div>
+        <div className="flex flex-col items-center gap-1 text-body-sm text-on-surface-variant">
+          <div>© 2026 TopStatus Monitoring. All rights reserved.</div>
+          <div>
+            Designed &amp; Built by{" "}
+            <a
+              href="https://millionpixels.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-on-surface transition-colors hover:text-primary hover:underline"
+            >
+              Million Pixels
+            </a>
+          </div>
+        </div>
       </Container>
     </footer>
   );

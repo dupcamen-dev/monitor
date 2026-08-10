@@ -10,7 +10,7 @@ export function Logo({ size = "md", href = "/" }: { size?: "sm" | "md"; href?: s
       >
         U
       </span>
-      <span className={`${text} font-bold tracking-tighter text-on-surface`}>UpStatus</span>
+      <span className={`${text} font-bold tracking-tighter text-on-surface`}>TopStatus</span>
     </Link>
   );
 }

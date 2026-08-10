@@ -122,7 +122,7 @@ export default function HomePage() {
                 <div>Feature</div>
                 <div className="text-center">UptimeRobot</div>
                 <div className="text-center">StatusPage</div>
-                <div className="text-center font-bold text-primary">UpStatus</div>
+                <div className="text-center font-bold text-primary">TopStatus</div>
               </div>
               {comparisons.map((row, i) => (
                 <div

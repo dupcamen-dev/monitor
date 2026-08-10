@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 const LINKED = "✅ Linked! Alerts for your monitors will arrive in this chat.";
 const LINK_FIRST =
-  "To connect, open your UpStatus dashboard → Integrations → Telegram → Connect, then tap the link or send the code there.";
+  "To connect, open your TopStatus dashboard → Integrations → Telegram → Connect, then tap the link or send the code there.";
 
 function cleanText(text: string): string {
   return text.trim().replace(/\s+/g, " ");
@@ -65,6 +65,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  await sendTelegramMessage(String(chatId), "Use /start to link this chat to UpStatus.");
+  await sendTelegramMessage(String(chatId), "Use /start to link this chat to TopStatus.");
   return NextResponse.json({ ok: true });
 }

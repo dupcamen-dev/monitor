@@ -45,7 +45,7 @@ const discordSteps = [
   },
   {
     title: "Create a webhook",
-    body: "Right-click the channel → Edit Channel → Integrations → Webhooks → New Webhook. Give it a name (e.g. “UpStatus Alerts”).",
+    body: "Right-click the channel → Edit Channel → Integrations → Webhooks → New Webhook. Give it a name (e.g. “TopStatus Alerts”).",
   },
   {
     title: "Copy the URL",

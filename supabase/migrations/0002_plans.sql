@@ -1,4 +1,4 @@
--- UpStatus plans: free (checks hourly) / paid (checks every 5 min)
+-- TopStatus plans: free (checks hourly) / paid (checks every 5 min)
 
 alter table public.organizations add column if not exists plan text not null default 'free';
 

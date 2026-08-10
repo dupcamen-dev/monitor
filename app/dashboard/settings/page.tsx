@@ -46,7 +46,7 @@ export default async function SettingsPage() {
             </h2>
             <div className="flex flex-col gap-5">
               <p className="text-body-sm text-on-surface-variant">
-                Your plan sets how often UpStatus checks your monitors.
+                Your plan sets how often TopStatus checks your monitors.
               </p>
               <PlanSelector plan={plan} />
             </div>

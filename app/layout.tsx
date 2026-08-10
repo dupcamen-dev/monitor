@@ -19,8 +19,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "UpStatus — Monitoring & Status Pages",
-    template: "%s · UpStatus",
+    default: "TopStatus — Monitoring & Status Pages",
+    template: "%s · TopStatus",
   },
   description:
     "Uptime monitoring and status pages in one place. Get reliable monitoring and beautiful status pages without overpaying.",

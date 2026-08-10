@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* ---- UpStatus design tokens (from DESIGN.md) ---- */
+  /* ---- TopStatus design tokens (from DESIGN.md) ---- */
 
   /* Surfaces */
   --color-background: #131314;
