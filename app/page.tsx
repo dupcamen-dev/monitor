@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Container } from "@/components/container";
 import { Icon } from "@/components/icon";
+import { AssistLoopWidget } from "@/components/assistloop-widget";
 
 export const metadata: Metadata = {
   title: "Monitoring + Status Pages. Finally in one place.",
@@ -265,6 +266,7 @@ export default function HomePage() {
         </section>
       </main>
       <SiteFooter />
+      <AssistLoopWidget />
     </div>
   );
 }
