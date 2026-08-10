@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Container } from "@/components/container";
 import { Toggle } from "@/components/toggle";
 import { SettingsSaveBar } from "@/components/actions/settings-save-bar";
 import { DeleteOrganizationButton } from "@/components/actions/delete-organization-button";
 import { PlanSelector } from "@/components/actions/plan-selector";
 import { getOrgPlan } from "@/lib/queries";
+import { getUserOrg } from "@/lib/org";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -27,7 +29,9 @@ function Field({ label, hint, value }: { label: string; hint?: string; value: st
 }
 
 export default async function SettingsPage() {
-  const plan = await getOrgPlan();
+  const org = await getUserOrg();
+  if (!org) redirect("/login");
+  const plan = await getOrgPlan(org.id);
 
   return (
     <div className="p-margin-mobile py-10 md:p-margin-desktop">
@@ -46,8 +50,8 @@ export default async function SettingsPage() {
               General
             </h2>
             <div className="flex flex-col gap-5">
-              <Field label="ORGANIZATION NAME" value="Acme Corp" />
-              <Field label="STATUS PAGE SLUG" value="acme" hint="Your public page will be at upstatus.dev/acme" />
+              <Field label="ORGANIZATION NAME" value={org.name} />
+              <Field label="STATUS PAGE SLUG" value={org.slug} hint="Your public page will be at upstatus.dev/{slug}" />
               <div>
                 <label className="mb-1 block font-mono text-code-label text-on-surface">TIMEZONE</label>
                 <select

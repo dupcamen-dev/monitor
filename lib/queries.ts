@@ -1,4 +1,4 @@
-import { createAdminClient, DEFAULT_ORG_ID } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
 import { secToInterval } from "@/lib/interval";
 import type { Monitor, Incident, DayState, IncidentUpdate, UpdateTone } from "@/lib/data";
 
@@ -25,22 +25,22 @@ export function planCheckIntervalSec(plan: OrgPlan): number {
   return plan === "paid" ? 300 : 3600;
 }
 
-export async function getOrgPlan(): Promise<OrgPlan> {
+export async function getOrgPlan(orgId: string): Promise<OrgPlan> {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("organizations")
     .select("plan")
-    .eq("id", DEFAULT_ORG_ID)
+    .eq("id", orgId)
     .single();
   return data?.plan === "paid" ? "paid" : "free";
 }
 
-async function fetchMonitorRows(): Promise<DbMonitor[]> {
+async function fetchMonitorRows(orgId: string): Promise<DbMonitor[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("monitors")
     .select("*")
-    .eq("org_id", DEFAULT_ORG_ID)
+    .eq("org_id", orgId)
     .order("created_at", { ascending: true });
   if (error) return [];
   return data ?? [];
@@ -104,18 +104,18 @@ function buildMonitor(
   };
 }
 
-export async function getMonitors(): Promise<Monitor[]> {
-  const [rows, byMonitor, plan] = await Promise.all([fetchMonitorRows(), fetchHistoryByMonitor(), getOrgPlan()]);
+export async function getMonitors(orgId: string): Promise<Monitor[]> {
+  const [rows, byMonitor, plan] = await Promise.all([fetchMonitorRows(orgId), fetchHistoryByMonitor(), getOrgPlan(orgId)]);
   const cadenceSec = planCheckIntervalSec(plan);
   return rows.map((r) => buildMonitor(r, byMonitor.get(r.id) ?? new Map(), cadenceSec));
 }
 
-export async function getMonitorOptions(): Promise<{ id: string; name: string }[]> {
+export async function getMonitorOptions(orgId: string): Promise<{ id: string; name: string }[]> {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("monitors")
     .select("id, name")
-    .eq("org_id", DEFAULT_ORG_ID)
+    .eq("org_id", orgId)
     .order("name", { ascending: true });
   return data ?? [];
 }
@@ -142,16 +142,19 @@ function formatTime(iso: string): string {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-export async function getIncidents(): Promise<Incident[]> {
+export async function getIncidents(orgId: string): Promise<Incident[]> {
   const supabase = createAdminClient();
 
   const { data } = await supabase
     .from("incidents")
     .select("*, updates:incident_updates(*), monitors:incident_monitors(monitor_id)")
-    .eq("org_id", DEFAULT_ORG_ID)
+    .eq("org_id", orgId)
     .order("started_at", { ascending: false });
 
-  const { data: monitorRows } = await supabase.from("monitors").select("id, name");
+  const { data: monitorRows } = await supabase
+    .from("monitors")
+    .select("id, name")
+    .eq("org_id", orgId);
   const nameById = new Map((monitorRows ?? []).map((m) => [m.id, m.name]));
 
   return (data ?? []).map((inc: DbIncident) => {
@@ -190,8 +193,8 @@ export interface StatusData {
   generated_at: string;
 }
 
-export async function getStatus(): Promise<StatusData> {
-  const [monitors, incidents] = await Promise.all([getMonitors(), getIncidents()]);
+export async function getStatus(orgId: string): Promise<StatusData> {
+  const [monitors, incidents] = await Promise.all([getMonitors(orgId), getIncidents(orgId)]);
 
   const overall: OverallStatus = monitors.some((m) => m.status === "down")
     ? "disruption"

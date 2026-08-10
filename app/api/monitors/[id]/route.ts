@@ -1,18 +1,22 @@
 import { NextResponse } from "next/server";
-import { createAdminClient, DEFAULT_ORG_ID } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
+import { getUserOrgId } from "@/lib/auth-org";
 
 export const dynamic = "force-dynamic";
 
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function GET(_request: Request, { params }: Ctx) {
+  const orgId = await getUserOrgId();
+  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { id } = await params;
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("monitors")
     .select("*")
     .eq("id", id)
-    .eq("org_id", DEFAULT_ORG_ID)
+    .eq("org_id", orgId)
     .single();
 
   if (error || !data) return NextResponse.json({ error: "Monitor not found" }, { status: 404 });
@@ -20,6 +24,9 @@ export async function GET(_request: Request, { params }: Ctx) {
 }
 
 export async function PATCH(request: Request, { params }: Ctx) {
+  const orgId = await getUserOrgId();
+  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { id } = await params;
   const body = await request.json().catch(() => ({}));
 
@@ -37,7 +44,7 @@ export async function PATCH(request: Request, { params }: Ctx) {
     .from("monitors")
     .update({ ...updates, updated_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("org_id", DEFAULT_ORG_ID)
+    .eq("org_id", orgId)
     .select()
     .single();
 
@@ -46,9 +53,12 @@ export async function PATCH(request: Request, { params }: Ctx) {
 }
 
 export async function DELETE(_request: Request, { params }: Ctx) {
+  const orgId = await getUserOrgId();
+  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { id } = await params;
   const supabase = createAdminClient();
-  const { error } = await supabase.from("monitors").delete().eq("id", id).eq("org_id", DEFAULT_ORG_ID);
+  const { error } = await supabase.from("monitors").delete().eq("id", id).eq("org_id", orgId);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });

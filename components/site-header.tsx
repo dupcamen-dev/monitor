@@ -43,7 +43,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-3">
           <Link
-            href="/dashboard"
+            href="/login"
             className="hidden text-body-sm text-on-surface-variant transition-colors hover:text-on-surface sm:block"
           >
             Log in

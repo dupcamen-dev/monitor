@@ -1,4 +1,4 @@
-import { createAdminClient, DEFAULT_ORG_ID } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN ?? "";
 
@@ -16,12 +16,12 @@ async function sendTelegram(chatId: string, text: string): Promise<boolean> {
   }
 }
 
-export async function notifySubscribers(title: string, body: string) {
+export async function notifySubscribers(orgId: string, title: string, body: string) {
   const supabase = createAdminClient();
   const { data: subs } = await supabase
     .from("subscriptions")
     .select("channel, target")
-    .eq("org_id", DEFAULT_ORG_ID)
+    .eq("org_id", orgId)
     .eq("verified", true);
 
   let sent = 0;

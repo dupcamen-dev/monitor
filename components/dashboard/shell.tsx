@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { Logo } from "@/components/logo";
 import { AddMonitorButton } from "@/components/actions/add-monitor-button";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: "dashboard" },
@@ -20,7 +21,15 @@ function isActive(href: string, pathname: string) {
   return pathname.startsWith(href);
 }
 
-function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+function SidebarContent({
+  pathname,
+  userEmail,
+  onNavigate,
+}: {
+  pathname: string;
+  userEmail?: string | null;
+  onNavigate?: () => void;
+}) {
   return (
     <>
       <div className="mb-8 flex items-center gap-3 px-2">
@@ -53,6 +62,12 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
       </div>
 
       <div className="mt-auto flex flex-col gap-2 border-t border-outline-variant pt-4 font-mono text-code-label">
+        {userEmail && (
+          <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+            <Icon name="person" size={18} />
+            <span className="min-w-0 flex-1 truncate text-on-surface-variant">{userEmail}</span>
+          </div>
+        )}
         <Link
           href="#"
           onClick={onNavigate}
@@ -61,27 +76,26 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
           <Icon name="description" size={18} />
           <span>Docs</span>
         </Link>
-        <Link
-          href="/"
-          onClick={onNavigate}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
-        >
-          <Icon name="logout" size={18} />
-          <span>Logout</span>
-        </Link>
+        <SignOutButton className="w-full" />
       </div>
     </>
   );
 }
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export function DashboardShell({
+  children,
+  userEmail,
+}: {
+  children: React.ReactNode;
+  userEmail?: string | null;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   return (
     <div className="min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-outline-variant bg-surface-container-lowest p-4 md:flex">
-        <SidebarContent pathname={pathname} />
+        <SidebarContent pathname={pathname} userEmail={userEmail} />
       </aside>
 
       {open && (
@@ -104,7 +118,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <Icon name="close" size={20} />
           </button>
         </div>
-        <SidebarContent pathname={pathname} onNavigate={() => setOpen(false)} />
+        <SidebarContent pathname={pathname} userEmail={userEmail} onNavigate={() => setOpen(false)} />
       </aside>
 
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-outline-variant bg-background/80 px-margin-mobile py-3 backdrop-blur-md md:hidden">

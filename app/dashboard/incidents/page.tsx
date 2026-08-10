@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Container } from "@/components/container";
 import { IncidentTimeline } from "@/components/incident-timeline";
 import { NewIncidentButton } from "@/components/actions/new-incident-button";
 import { getIncidents, getMonitorOptions } from "@/lib/queries";
+import { getUserOrg } from "@/lib/org";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default async function IncidentsPage() {
-  const [incidents, monitors] = await Promise.all([getIncidents(), getMonitorOptions()]);
+  const org = await getUserOrg();
+  if (!org) redirect("/login");
+  const [incidents, monitors] = await Promise.all([
+    getIncidents(org.id),
+    getMonitorOptions(org.id),
+  ]);
   const resolved = incidents.filter((i) => i.resolved).length;
   const open = incidents.length - resolved;
 

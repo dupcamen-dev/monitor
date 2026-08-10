@@ -6,6 +6,8 @@ import { AddMonitorButton } from "@/components/actions/add-monitor-button";
 import { uptimePct } from "@/lib/data";
 import { getStatus, getOrgPlan, planCheckIntervalSec } from "@/lib/queries";
 import { secToInterval } from "@/lib/interval";
+import { getUserOrg } from "@/lib/org";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +39,9 @@ function StatCard({
 }
 
 export default async function DashboardPage() {
-  const [status, plan] = await Promise.all([getStatus(), getOrgPlan()]);
+  const org = await getUserOrg();
+  if (!org) redirect("/login");
+  const [status, plan] = await Promise.all([getStatus(org.id), getOrgPlan(org.id)]);
   const checkInterval = secToInterval(planCheckIntervalSec(plan));
   const overallHistory = status.monitors.flatMap((m) => m.history);
   const overall = uptimePct(overallHistory);

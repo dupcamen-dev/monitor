@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createAdminClient, DEFAULT_ORG_ID } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
+import { getUserOrgId } from "@/lib/auth-org";
 import type { OrgPlan } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -7,11 +8,14 @@ export const dynamic = "force-dynamic";
 const validPlans: OrgPlan[] = ["free", "paid"];
 
 export async function GET() {
+  const orgId = await getUserOrgId();
+  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("organizations")
     .select("plan")
-    .eq("id", DEFAULT_ORG_ID)
+    .eq("id", orgId)
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -19,6 +23,9 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
+  const orgId = await getUserOrgId();
+  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const body = await request.json().catch(() => ({}));
   const plan = body?.plan as OrgPlan;
   if (!validPlans.includes(plan)) {
@@ -29,7 +36,7 @@ export async function PATCH(request: Request) {
   const { data, error } = await supabase
     .from("organizations")
     .update({ plan })
-    .eq("id", DEFAULT_ORG_ID)
+    .eq("id", orgId)
     .select("plan")
     .single();
 

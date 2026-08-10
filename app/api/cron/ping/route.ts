@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAdminClient, DEFAULT_ORG_ID } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
 import { pingUrl } from "@/lib/ping";
 import { notifySubscribers } from "@/lib/notify";
 
@@ -21,17 +21,15 @@ export async function POST(request: Request) {
   const now = new Date().toISOString();
   const nowMs = Date.now();
 
-  const { data: org } = await supabase
-    .from("organizations")
-    .select("plan")
-    .eq("id", DEFAULT_ORG_ID)
-    .single();
-  const checkEveryMs = (org?.plan === "paid" ? 5 : 60) * 60 * 1000;
+  const { data: orgs } = await supabase.from("organizations").select("id, plan");
+  const checkEveryMs = new Map<string, number>();
+  for (const org of orgs ?? []) {
+    checkEveryMs.set(org.id, (org.plan === "paid" ? 5 : 60) * 60 * 1000);
+  }
 
   const { data: monitors } = await supabase
     .from("monitors")
     .select("*")
-    .eq("org_id", DEFAULT_ORG_ID)
     .eq("paused", false);
 
   let checked = 0;
@@ -39,11 +37,12 @@ export async function POST(request: Request) {
   let downCount = 0;
   let created = 0;
   let resolved = 0;
-  const newIncidents: string[] = [];
+  const incidentsByOrg = new Map<string, string[]>();
 
   for (const monitor of monitors ?? []) {
+    const interval = checkEveryMs.get(monitor.org_id) ?? 60 * 60 * 1000;
     const last = monitor.last_checked_at ? new Date(monitor.last_checked_at).getTime() : 0;
-    if (last && nowMs - last < checkEveryMs) {
+    if (last && nowMs - last < interval) {
       skipped += 1;
       continue;
     }
@@ -64,7 +63,7 @@ export async function POST(request: Request) {
       const { data: inc } = await supabase
         .from("incidents")
         .insert({
-          org_id: DEFAULT_ORG_ID,
+          org_id: monitor.org_id,
           title: `${monitor.name} is down`,
           status: "identified",
           impact: "major",
@@ -75,7 +74,9 @@ export async function POST(request: Request) {
 
       if (inc) {
         created += 1;
-        newIncidents.push(inc.title);
+        const list = incidentsByOrg.get(monitor.org_id) ?? [];
+        list.push(inc.title);
+        incidentsByOrg.set(monitor.org_id, list);
         await supabase.from("incident_monitors").insert({ incident_id: inc.id, monitor_id: monitor.id });
         await supabase.from("incident_updates").insert({
           incident_id: inc.id,
@@ -122,8 +123,8 @@ export async function POST(request: Request) {
       .eq("id", monitor.id);
   }
 
-  if (newIncidents.length > 0) {
-    await notifySubscribers("New incidents", newIncidents.join(", "));
+  for (const [orgId, titles] of incidentsByOrg) {
+    await notifySubscribers(orgId, "New incidents", titles.join(", "));
   }
 
   return NextResponse.json({ ok: true, checked, skipped, down: downCount, created, resolved });

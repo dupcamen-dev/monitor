@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Container } from "@/components/container";
 import { MonitorsManager } from "@/components/dashboard/monitors-manager";
 import { getMonitors, getOrgPlan, planCheckIntervalSec } from "@/lib/queries";
 import { secToInterval } from "@/lib/interval";
+import { getUserOrg } from "@/lib/org";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default async function MonitorsPage() {
-  const [monitors, plan] = await Promise.all([getMonitors(), getOrgPlan()]);
+  const org = await getUserOrg();
+  if (!org) redirect("/login");
+  const [monitors, plan] = await Promise.all([getMonitors(org.id), getOrgPlan(org.id)]);
   const checkInterval = secToInterval(planCheckIntervalSec(plan));
 
   return (

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createAdminClient, DEFAULT_ORG_ID } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
+import { getUserOrgId } from "@/lib/auth-org";
 
 export const dynamic = "force-dynamic";
 
@@ -7,11 +8,14 @@ const INCIDENT_STATUSES = ["investigating", "identified", "monitoring", "resolve
 const IMPACTS = ["none", "minor", "major", "critical"];
 
 export async function GET() {
+  const orgId = await getUserOrgId();
+  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("incidents")
     .select("*, updates:incident_updates(*), monitors:incident_monitors(monitor_id)")
-    .eq("org_id", DEFAULT_ORG_ID)
+    .eq("org_id", orgId)
     .order("started_at", { ascending: false });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -19,6 +23,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const orgId = await getUserOrgId();
+  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const body = await request.json().catch(() => null);
   const title = typeof body?.title === "string" ? body.title.trim() : "";
   if (!title) return NextResponse.json({ error: "title is required" }, { status: 400 });
@@ -33,7 +40,7 @@ export async function POST(request: Request) {
 
   const { data: incident, error } = await supabase
     .from("incidents")
-    .insert({ org_id: DEFAULT_ORG_ID, title, status, impact, started_at: startedAt })
+    .insert({ org_id: orgId, title, status, impact, started_at: startedAt })
     .select()
     .single();
 
