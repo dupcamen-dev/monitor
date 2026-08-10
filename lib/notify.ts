@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase";
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN ?? "";
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "TopStatus <onboarding@resend.dev>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "TopStatus <alerts@topstatus.space>";
 
 async function sendTelegram(chatId: string, text: string): Promise<boolean> {
   if (!BOT_TOKEN) return false;
