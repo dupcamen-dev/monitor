@@ -140,20 +140,30 @@ export default function HomePage() {
           </Container>
         </section>
 
-        {/* Social proof */}
+        {/* Accepted crypto */}
         <section className="border-y border-card-border py-12">
           <Container>
             <p className="mb-8 text-center font-mono text-code-label uppercase tracking-widest text-on-surface-variant">
-              Trusted by over 1,000+ developers
+              We accept crypto payments
             </p>
             <div className="relative overflow-hidden" style={{ maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)" }}>
               <div className="animate-marquee flex w-max items-center gap-16">
                 {[0, 1].map((copy) => (
                   <div key={copy} className="flex items-center gap-16" aria-hidden={copy === 1}>
-                    {["TechCorp", "DevOps Inc", "CloudScale", "StartUp.io", "Vertex", "NordStack", "Hexlab", "Railyard"].map((name) => (
-                      <span key={`${copy}-${name}`} className="flex items-center gap-2 text-headline-md text-on-surface-variant">
-                        <Icon name="monitoring" size={20} className="text-primary/60" />
-                        {name}
+                    {[
+                      { ticker: "USDT", net: "BSC", color: "text-up" },
+                      { ticker: "USDT", net: "TRC-20", color: "text-up" },
+                      { ticker: "USDT", net: "TON", color: "text-up" },
+                      { ticker: "USDC", net: "ERC-20", color: "text-primary" },
+                      { ticker: "BNB", net: "BSC", color: "text-tertiary" },
+                      { ticker: "ETH", net: "Ethereum", color: "text-on-surface-variant" },
+                      { ticker: "BTC", net: "Bitcoin", color: "text-secondary" },
+                    ].map((c) => (
+                      <span key={`${copy}-${c.ticker}-${c.net}`} className="flex items-center gap-3">
+                        <span className={`flex h-8 w-14 items-center justify-center rounded-md border border-card-border bg-surface-container-lowest font-mono text-code-label ${c.color}`}>
+                          {c.ticker}
+                        </span>
+                        <span className="text-headline-md text-on-surface-variant">{c.net}</span>
                       </span>
                     ))}
                   </div>
