@@ -1,3 +1,5 @@
+import { fetchBlockedSafe } from "@/lib/net";
+
 export type PingStatus = "up" | "degraded" | "down";
 
 export type PingResult = {
@@ -25,9 +27,8 @@ export async function pingUrl(url: string): Promise<PingResult> {
   const start = performance.now();
 
   try {
-    const res = await fetch(url, {
+    const res = await fetchBlockedSafe(url, {
       signal: controller.signal,
-      redirect: "follow",
       cache: "no-store",
     });
     const latencyMs = Math.round(performance.now() - start);

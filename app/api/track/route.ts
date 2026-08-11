@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase";
 import { createServerClientSSR } from "@/lib/supabase/auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    const limited = rateLimit(request, 30);
+    if (!limited.ok) {
+      return NextResponse.json(
+        { ok: true },
+        { status: 429, headers: { "Retry-After": String(limited.retryAfterSeconds) } }
+      );
+    }
+
     const body = await request.json().catch(() => null);
     const path = typeof body?.path === "string" ? body.path.slice(0, 500) : "/";
     if (!path.startsWith("/") || path.startsWith("/api")) {

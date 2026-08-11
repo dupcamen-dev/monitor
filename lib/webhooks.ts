@@ -1,5 +1,6 @@
 import { createHmac } from "crypto";
 import { createAdminClient } from "@/lib/supabase";
+import { fetchBlockedSafe } from "@/lib/net";
 
 export interface WebhookRow {
   id: string;
@@ -54,7 +55,7 @@ async function postJson(url: string, secret: string, payload: string): Promise<b
       "User-Agent": "TopStatus/1.0",
     };
     if (secret) headers["X-TopStatus-Signature"] = `sha256=${sign(secret, payload)}`;
-    const res = await fetch(url, {
+    const res = await fetchBlockedSafe(url, {
       method: "POST",
       headers,
       body: payload,

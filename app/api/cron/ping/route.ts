@@ -9,8 +9,12 @@ export const maxDuration = 300;
 
 function isAuthorized(request: Request): boolean {
   const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
-  return request.headers.get("x-cron-secret") === secret;
+  if (!secret) return false;
+
+  const authorization = request.headers.get("authorization") ?? "";
+  const bearer = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+  const custom = request.headers.get("x-cron-secret") ?? "";
+  return bearer === secret || custom === secret;
 }
 
 export async function POST(request: Request) {

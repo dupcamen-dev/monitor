@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase";
+import { fetchBlockedSafe } from "@/lib/net";
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN ?? "";
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
@@ -21,7 +22,7 @@ async function sendTelegram(chatId: string, text: string): Promise<boolean> {
 async function sendDiscord(webhookUrl: string, text: string): Promise<boolean> {
   if (!webhookUrl) return false;
   try {
-    const res = await fetch(webhookUrl, {
+    const res = await fetchBlockedSafe(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: text }),
