@@ -1,21 +1,18 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
 export function SignOutButton({ className }: { className?: string }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const signOut = useCallback(async () => {
     setLoading(true);
     const supabase = createBrowserSupabase();
     await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  }, [router]);
+    window.location.assign(window.location.origin);
+  }, []);
 
   return (
     <button

@@ -68,12 +68,14 @@ function SidebarContent({
   userEmail,
   plan,
   planExpiresAt,
+  isAdmin,
   onNavigate,
 }: {
   pathname: string;
   userEmail?: string | null;
   plan: OrgPlan;
   planExpiresAt: string | null;
+  isAdmin?: boolean;
   onNavigate?: () => void;
 }) {
   return (
@@ -101,6 +103,20 @@ function SidebarContent({
             </Link>
           );
         })}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            onClick={onNavigate}
+            className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-150 ${
+              pathname.startsWith("/admin")
+                ? "bg-primary text-on-primary"
+                : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
+            }`}
+          >
+            <Icon name="admin_panel_settings" size={18} filled={pathname.startsWith("/admin")} />
+            <span>Admin</span>
+          </Link>
+        )}
       </div>
 
       <div className="mt-8">
@@ -139,11 +155,13 @@ export function DashboardShell({
   userEmail,
   plan,
   planExpiresAt,
+  isAdmin,
 }: {
   children: React.ReactNode;
   userEmail?: string | null;
   plan: OrgPlan;
   planExpiresAt: string | null;
+  isAdmin?: boolean;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -151,7 +169,13 @@ export function DashboardShell({
   return (
     <div className="min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-outline-variant bg-surface-container-lowest p-4 md:flex">
-        <SidebarContent pathname={pathname} userEmail={userEmail} plan={plan} planExpiresAt={planExpiresAt} />
+        <SidebarContent
+          pathname={pathname}
+          userEmail={userEmail}
+          plan={plan}
+          planExpiresAt={planExpiresAt}
+          isAdmin={isAdmin}
+        />
       </aside>
 
       {open && (
@@ -179,6 +203,7 @@ export function DashboardShell({
           userEmail={userEmail}
           plan={plan}
           planExpiresAt={planExpiresAt}
+          isAdmin={isAdmin}
           onNavigate={() => setOpen(false)}
         />
       </aside>

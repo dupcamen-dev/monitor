@@ -7,10 +7,42 @@ import { Icon } from "@/components/icon";
 import { AssistLoopWidget } from "@/components/assistloop-widget";
 import { PayPlanButton } from "@/components/actions/pay-plan-button";
 import { Reveal } from "@/components/actions/reveal";
+import { createAdminClient } from "@/lib/supabase";
 
-export const metadata: Metadata = {
+const DEFAULT_SEO = {
   title: "Monitoring + Status Pages. Finally in one place.",
+  description:
+    "Get reliable uptime monitoring and beautiful status pages without overpaying. Save up to $399/mo compared to competitors.",
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("seo_settings")
+      .select("title, description, keywords, og_title, og_description")
+      .eq("id", 1)
+      .maybeSingle();
+    const s = data as {
+      title?: string | null;
+      description?: string | null;
+      keywords?: string | null;
+      og_title?: string | null;
+      og_description?: string | null;
+    } | null;
+    return {
+      title: s?.title || DEFAULT_SEO.title,
+      description: s?.description || DEFAULT_SEO.description,
+      keywords: s?.keywords || undefined,
+      openGraph: {
+        title: s?.og_title || undefined,
+        description: s?.og_description || undefined,
+      },
+    };
+  } catch {
+    return { title: DEFAULT_SEO.title, description: DEFAULT_SEO.description };
+  }
+}
 
 const features = [
   {

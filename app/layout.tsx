@@ -4,6 +4,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { ThemeScript } from "@/components/theme-script";
 import { ThemeHydration } from "@/components/theme-hydration";
+import { TrackVisit } from "@/components/track-visit";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-screen bg-background font-sans text-body-sm text-on-surface antialiased">
         <ToastProvider>
           <ThemeHydration />
+          <TrackVisit />
           {children}
         </ToastProvider>
       </body>
