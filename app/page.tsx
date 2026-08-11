@@ -13,6 +13,8 @@ const DEFAULT_SEO = {
   title: "Monitoring + Status Pages. Finally in one place.",
   description:
     "Get reliable uptime monitoring and beautiful status pages without overpaying. Save up to $399/mo compared to competitors.",
+  keywords:
+    "uptime monitoring, status page, website monitoring, server monitoring, api monitoring, downtime alerts, uptime checker, availability monitoring, incident management, webhook alerts, synthetic monitoring, latency, http check, sla, моніторинг аптайму, статус сторінка, моніторинг сайтів, перевірка доступності сайту, моніторинг серверів, сповіщення про збої, мониторинг аптайма, статус страница, мониторинг сайтов, проверка доступности сайта, мониторинг серверов, алерты о сбоях, monitoring uptime, strona statusu, monitoring stron, monitorowanie serwerów, powiadomienia o awarii, sprawdzanie dostępności strony",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,14 +35,14 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: s?.title || DEFAULT_SEO.title,
       description: s?.description || DEFAULT_SEO.description,
-      keywords: s?.keywords || undefined,
+      keywords: s?.keywords || DEFAULT_SEO.keywords,
       openGraph: {
         title: s?.og_title || undefined,
         description: s?.og_description || undefined,
       },
     };
   } catch {
-    return { title: DEFAULT_SEO.title, description: DEFAULT_SEO.description };
+    return { title: DEFAULT_SEO.title, description: DEFAULT_SEO.description, keywords: DEFAULT_SEO.keywords };
   }
 }
 
