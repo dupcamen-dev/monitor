@@ -1,5 +1,6 @@
 import { Icon } from "@/components/icon";
 import { getAdminAnalytics } from "@/lib/admin-analytics";
+import { ClearHistory } from "@/components/admin/clear-history";
 
 export const dynamic = "force-dynamic";
 
@@ -196,6 +197,9 @@ export default async function AdminPage() {
           <StatCard label="Active (30 days)" value={String(a.active30d)} icon="groups" iconClass="text-tertiary" />
         </div>
       </section>
+
+      {/* Data cleanup */}
+      <ClearHistory />
     </div>
   );
 }

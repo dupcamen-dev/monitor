@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 const TABS = [
   { href: "/admin", label: "Analytics" },
+  { href: "/admin/users", label: "Users & plans" },
   { href: "/admin/seo", label: "SEO" },
 ];
 
@@ -17,7 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!isAdminEmail(user?.email)) redirect("/dashboard");
+  if (!(await isAdminEmail(user?.email))) redirect("/dashboard");
 
   return (
     <div className="flex min-h-screen flex-col">

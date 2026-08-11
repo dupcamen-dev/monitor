@@ -12,7 +12,7 @@ async function requireAdminUser() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  return isAdminEmail(user?.email) ? user : null;
+  return (await isAdminEmail(user?.email)) ? user : null;
 }
 
 export async function GET() {

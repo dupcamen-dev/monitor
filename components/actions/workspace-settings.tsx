@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Icon } from "@/components/icon";
 import { useToast } from "@/components/ui/toast";
 import { TIMEZONES } from "@/lib/timezones";
@@ -68,9 +69,15 @@ export function WorkspaceSettings({
           placeholder="acme"
           className={inputClass}
         />
-        <p className="mt-1.5 text-body-sm text-on-surface-variant">
-          Your public page will be at topstatus.space/{slug}
-        </p>
+        <Link
+          href={`/s/${slug}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-1.5 inline-flex items-center gap-1 text-body-sm text-primary hover:underline"
+        >
+          <Icon name="open_in_new" size={14} />
+          Public page: topstatus.space/s/{slug}
+        </Link>
       </div>
       <div>
         <label className="mb-1 block font-mono text-code-label text-on-surface">TIMEZONE</label>

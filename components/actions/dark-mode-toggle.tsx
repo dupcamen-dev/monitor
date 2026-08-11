@@ -17,9 +17,9 @@ function subscribe(cb: () => void) {
 }
 
 function getStoredTheme(): Theme {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
   const v = window.localStorage.getItem(STORAGE_KEY);
-  return v === "light" ? "light" : "dark";
+  return v === "dark" ? "dark" : "light";
 }
 
 function getSnapshot(): Theme {
@@ -27,7 +27,7 @@ function getSnapshot(): Theme {
 }
 
 export function DarkModeToggle() {
-  const theme = useSyncExternalStore(subscribe, getSnapshot, () => "dark");
+  const theme = useSyncExternalStore(subscribe, getSnapshot, () => "light");
 
   const toggle = (next: boolean) => {
     const value: Theme = next ? "light" : "dark";

@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       userEmail={user?.email}
       plan={planInfo.plan}
       planExpiresAt={planInfo.expiresAt}
-      isAdmin={isAdminEmail(user?.email)}
+      isAdmin={await isAdminEmail(user?.email)}
     >
       {children}
     </DashboardShell>

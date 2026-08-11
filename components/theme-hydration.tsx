@@ -12,7 +12,7 @@ export function ThemeHydration() {
     } catch {
       t = null;
     }
-    if (t !== "light" && t !== "dark") t = "dark";
+    if (t !== "light" && t !== "dark") t = "light";
     document.documentElement.dataset.theme = t;
   }, []);
 
