@@ -30,7 +30,7 @@ export function normalizePlan(value: unknown): OrgPlan {
 }
 
 export function planCheckIntervalSec(plan: OrgPlan): number {
-  return plan === "free" ? 3600 : 300;
+  return plan === "free" ? 3600 : 60;
 }
 
 export interface OrgPlanInfo {

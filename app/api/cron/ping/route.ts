@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         plan = "free";
       }
     }
-    checkEveryMs.set(org.id, (plan === "paid" || plan === "yearly" ? 5 : 60) * 60 * 1000);
+    checkEveryMs.set(org.id, (plan === "paid" || plan === "yearly" ? 1 : 60) * 60 * 1000);
   }
   if (expiredOrgs.length) {
     await supabase
