@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { Modal } from "@/components/ui/modal";
@@ -22,6 +22,26 @@ export function MonitorsList({ monitors }: { monitors: Monitor[] }) {
   const [filter, setFilter] = useState<MonitorStatus | "all">("all");
   const { show } = useToast();
   const router = useRouter();
+
+  /* Lazy fallback: if any monitor is overdue when the page loads, trigger a
+     refresh so the bars reset without waiting for the cron scheduler. */
+  useEffect(() => {
+    const needsRefresh = monitors.some(
+      (m) =>
+        !m.paused &&
+        (!m.lastCheckedAt || Date.now() - new Date(m.lastCheckedAt).getTime() >= m.intervalSec * 1000)
+    );
+    if (!needsRefresh) return;
+    let cancelled = false;
+    fetch("/api/monitors/refresh", { method: "POST" })
+      .then((res) => {
+        if (res.ok && !cancelled) router.refresh();
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [monitors, router]);
 
   /* Row action modal state */
   const [menuFor, setMenuFor] = useState<Monitor | null>(null);
