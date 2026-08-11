@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Container } from "@/components/container";
+import { Icon } from "@/components/icon";
 import { Toggle } from "@/components/toggle";
 import { WorkspaceSettings } from "@/components/actions/workspace-settings";
 import { DeleteOrganizationButton } from "@/components/actions/delete-organization-button";
@@ -68,6 +70,18 @@ export default async function SettingsPage() {
                   </p>
                 </div>
                 <Toggle checked={true} label="Public status page" />
+              </div>
+              <div className="rounded-lg border border-card-border bg-surface-container-lowest p-4">
+                <p className="mb-1 font-mono text-code-label text-on-surface-variant">PUBLIC URL</p>
+                <Link
+                  href={`/s/${org.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-body-sm text-primary hover:underline"
+                >
+                  <Icon name="open_in_new" size={16} />
+                  /s/{org.slug}
+                </Link>
               </div>
               <div className="flex items-center justify-between gap-4">
                 <div>

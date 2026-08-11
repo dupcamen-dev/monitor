@@ -17,14 +17,21 @@ const features = [
     icon: "monitoring",
     color: "text-primary",
     title: "Real-time monitoring",
-    text: "Check your services at up to 1-minute intervals. Instant downtime detection with global probe locations.",
+    text: "Check your services every 5 minutes on paid plans, hourly on free. Instant downtime detection with auto-created incidents.",
     chart: true,
   },
   {
     icon: "notifications_active",
     color: "text-primary",
     title: "Instant alerts",
-    text: "Receive alerts via WhatsApp, Telegram, Email, or Webhooks the second a service goes down.",
+    text: "Receive alerts via Telegram, Email, Discord, or Webhooks the second a service goes down.",
+    chart: false,
+  },
+  {
+    icon: "verified",
+    color: "text-secondary",
+    title: "Public status page",
+    text: "Share live status, uptime history and incidents with your customers at your own public URL.",
     chart: false,
   },
   {
@@ -32,13 +39,6 @@ const features = [
     color: "text-primary",
     title: "Incident history",
     text: "Detailed log of all events and downtime, automatically published to your status page.",
-    chart: false,
-  },
-  {
-    icon: "verified",
-    color: "text-secondary",
-    title: "99.99% reliability",
-    text: "Distributed monitoring infrastructure ensures maximum check accuracy from multiple regions.",
     chart: false,
   },
 ];
@@ -56,7 +56,7 @@ const faq = [
   },
   {
     q: "Can I cancel anytime?",
-    a: "Yes. You can downgrade to the Free plan at any time from the Billing tab in your dashboard. No contracts, no hidden fees.",
+    a: "Yes. You can downgrade to the Free plan at any time from Settings → Plan in your dashboard. No contracts, no hidden fees.",
   },
   {
     q: "What check intervals are available?",
@@ -75,7 +75,7 @@ const comparisons: { feature: string; rows: { uptime: CellValue; statuspage: Cel
     rows: { uptime: "cancel", statuspage: "check", us: "check" },
   },
   {
-    feature: "Telegram & WhatsApp alerts",
+    feature: "Telegram, email & Discord alerts",
     rows: { uptime: "cancel", statuspage: "check", us: "check" },
   },
   {
@@ -219,7 +219,7 @@ export default function HomePage() {
             </Reveal>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {features.map((f, i) => (
-                <Reveal key={f.title} delay={i * 80} className={f.chart || i === 3 ? "md:col-span-2" : ""}>
+                <Reveal key={f.title} delay={i * 80} className={f.chart || i === 2 ? "md:col-span-2" : ""}>
                   <div
                     className={`flex h-full flex-col justify-between rounded-xl border border-card-border bg-card p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-surface-variant hover:bg-surface-container-lowest`}
                   >
