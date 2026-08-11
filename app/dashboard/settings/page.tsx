@@ -6,7 +6,8 @@ import { WorkspaceSettings } from "@/components/actions/workspace-settings";
 import { DeleteOrganizationButton } from "@/components/actions/delete-organization-button";
 import { DarkModeToggle } from "@/components/actions/dark-mode-toggle";
 import { PlanSelector } from "@/components/actions/plan-selector";
-import { getOrgPlan } from "@/lib/queries";
+import { PaymentStatusNotice } from "@/components/actions/payment-status-notice";
+import { getOrgPlanInfo } from "@/lib/queries";
 import { getUserOrg } from "@/lib/org";
 
 export const metadata: Metadata = {
@@ -18,10 +19,11 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   const org = await getUserOrg();
   if (!org) redirect("/login");
-  const plan = await getOrgPlan(org.id);
+  const { plan, expiresAt } = await getOrgPlanInfo(org.id);
 
   return (
     <div className="p-margin-mobile py-10 md:p-margin-desktop">
+      <PaymentStatusNotice />
       <Container className="!p-0">
         <header className="mb-12">
           <h1 className="text-display-lg-mobile text-on-surface md:text-display-lg">Settings</h1>
@@ -48,7 +50,7 @@ export default async function SettingsPage() {
               <p className="text-body-sm text-on-surface-variant">
                 Your plan sets how often TopStatus checks your monitors.
               </p>
-              <PlanSelector plan={plan} />
+              <PlanSelector plan={plan} expiresAt={expiresAt} />
             </div>
           </section>
 

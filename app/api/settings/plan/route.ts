@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase";
 import { getUserOrgId } from "@/lib/auth-org";
-import { normalizePlan, PLAN_MONTH_MS, PLAN_YEAR_MS } from "@/lib/queries";
+import { normalizePlan } from "@/lib/queries";
 import type { OrgPlan } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
-
-const validPlans: OrgPlan[] = ["free", "paid", "yearly"];
 
 export async function GET() {
   const orgId = await getUserOrgId();
@@ -34,18 +32,18 @@ export async function PATCH(request: Request) {
   if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));
+  // Paid/yearly plans can only be activated through NowPayments (see /api/payments).
+  // This endpoint only supports downgrading to the free plan.
   const plan = body?.plan as OrgPlan;
-  if (!validPlans.includes(plan)) {
-    return NextResponse.json({ error: "Invalid plan. Choose 'free', 'paid' or 'yearly'." }, { status: 400 });
+  if (plan !== "free") {
+    return NextResponse.json(
+      { error: "Paid plans must be purchased via the Plan selector." },
+      { status: 400 }
+    );
   }
 
   const supabase = createAdminClient();
   const patch: { plan: OrgPlan; plan_expires_at: string | null } = { plan, plan_expires_at: null };
-  if (plan === "paid") {
-    patch.plan_expires_at = new Date(Date.now() + PLAN_MONTH_MS).toISOString();
-  } else if (plan === "yearly") {
-    patch.plan_expires_at = new Date(Date.now() + PLAN_YEAR_MS).toISOString();
-  }
 
   const { data, error } = await supabase
     .from("organizations")
