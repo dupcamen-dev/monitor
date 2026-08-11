@@ -76,6 +76,7 @@ export function PlanSelector({ plan, expiresAt }: { plan: PlanKey; expiresAt: st
       {plans.map((p) => {
         const isActive = plan === p.key;
         const isPaying = paying === p.key;
+        const yearlyLocked = plan === "yearly" && p.key === "paid" && expiresAt !== null;
         return (
           <div
             key={p.key}
@@ -100,6 +101,18 @@ export function PlanSelector({ plan, expiresAt }: { plan: PlanKey; expiresAt: st
                   : p.key === "free"
                     ? "You are on the free plan."
                     : "Active"}
+              </div>
+            ) : yearlyLocked ? (
+              <div className="mt-auto flex flex-col gap-1.5">
+                <div className="text-body-sm text-on-surface-variant">Included in your yearly plan.</div>
+                <button
+                  onClick={() => show("Monthly is unavailable while your yearly plan is active.", "info")}
+                  className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-body-sm text-on-surface-variant"
+                  disabled
+                >
+                  <Icon name="lock" size={16} />
+                  Unavailable
+                </button>
               </div>
             ) : p.key === "free" ? (
               <button

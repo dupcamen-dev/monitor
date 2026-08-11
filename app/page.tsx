@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Container } from "@/components/container";
 import { Icon } from "@/components/icon";
 import { AssistLoopWidget } from "@/components/assistloop-widget";
+import { PayPlanButton } from "@/components/actions/pay-plan-button";
 
 export const metadata: Metadata = {
   title: "Monitoring + Status Pages. Finally in one place.",
@@ -191,6 +192,7 @@ export default function HomePage() {
             <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
               {[
                 {
+                  key: "free" as const,
                   name: "Free",
                   price: "$0",
                   billing: "/ month",
@@ -200,12 +202,13 @@ export default function HomePage() {
                   features: ["Unlimited monitors", "1 status page", "Hourly checks", "Email alerts"],
                 },
                 {
+                  key: "paid" as const,
                   name: "Paid",
                   price: "$19",
                   billing: "/ month",
                   tagline: "For teams that need speed",
                   cadence: "Checks every 5 minutes",
-                  cta: "Start 14-day trial",
+                  cta: "Pay via crypto",
                   features: [
                     "Unlimited monitors",
                     "1 status page",
@@ -216,12 +219,13 @@ export default function HomePage() {
                   featured: true,
                 },
                 {
+                  key: "yearly" as const,
                   name: "Yearly",
                   price: "$150",
                   billing: "/ year",
                   tagline: "Best value for power users",
                   cadence: "Checks every 5 minutes",
-                  cta: "Go yearly",
+                  cta: "Pay via crypto",
                   badge: "BEST VALUE",
                   features: [
                     "Everything in Paid",
@@ -272,16 +276,20 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    href="/dashboard"
-                    className={`mt-auto rounded-lg px-4 py-3 text-center font-mono text-code-label transition-colors ${
-                      plan.featured
-                        ? "bg-primary text-on-primary hover:bg-primary/90"
-                        : "border border-card-border text-on-surface hover:border-surface-variant"
-                    }`}
-                  >
-                    {plan.cta}
-                  </Link>
+                  {plan.key === "free" ? (
+                    <Link
+                      href="/dashboard"
+                      className={`mt-auto rounded-lg px-4 py-3 text-center font-mono text-code-label transition-colors ${
+                        plan.featured
+                          ? "bg-primary text-on-primary hover:bg-primary/90"
+                          : "border border-card-border text-on-surface hover:border-surface-variant"
+                      }`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  ) : (
+                    <PayPlanButton plan={plan.key} label={plan.cta} primary={plan.featured} />
+                  )}
                 </div>
               ))}
             </div>

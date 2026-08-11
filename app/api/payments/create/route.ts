@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUserOrgId } from "@/lib/auth-org";
 import { createPaymentInvoice, isPayablePlan } from "@/lib/payments";
+import { getOrgPlanInfo } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,16 @@ export async function POST(request: Request) {
   const plan = body?.plan;
   if (!isPayablePlan(plan)) {
     return NextResponse.json({ error: "Invalid plan for payment." }, { status: 400 });
+  }
+
+  const current = await getOrgPlanInfo(orgId);
+  const yearlyActive =
+    current.plan === "yearly" && current.expiresAt !== null && new Date(current.expiresAt).getTime() > Date.now();
+  if (plan === "paid" && yearlyActive) {
+    return NextResponse.json(
+      { error: "You already have an active yearly plan. Upgrade is not available until it expires." },
+      { status: 400 }
+    );
   }
 
   try {
