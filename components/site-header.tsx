@@ -25,7 +25,7 @@ export async function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg px-3 py-1.5 text-on-surface-variant transition-colors hover:text-on-surface"
+              className="rounded-lg px-3 py-1.5 text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-on-surface"
             >
               {item.label}
             </Link>

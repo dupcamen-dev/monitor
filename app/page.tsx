@@ -6,6 +6,7 @@ import { Container } from "@/components/container";
 import { Icon } from "@/components/icon";
 import { AssistLoopWidget } from "@/components/assistloop-widget";
 import { PayPlanButton } from "@/components/actions/pay-plan-button";
+import { Reveal } from "@/components/actions/reveal";
 
 export const metadata: Metadata = {
   title: "Monitoring + Status Pages. Finally in one place.",
@@ -44,6 +45,26 @@ const features = [
 
 type CellValue = "check" | "cancel" | "low" | "high" | "best";
 
+const faq = [
+  {
+    q: "How is this different from UptimeRobot + StatusPage.io?",
+    a: "TopStatus combines monitoring and status pages in one product. You skip the expensive per-status-page fees and manage everything from a single dashboard.",
+  },
+  {
+    q: "How do I pay with crypto?",
+    a: "Click 'Pay via crypto' on any paid plan. You'll get an invoice with a temporary deposit address and can pay in USDT on BSC, TRON, or TON. Your plan activates automatically once the transaction confirms.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Yes. You can downgrade to the Free plan at any time from the Billing tab in your dashboard. No contracts, no hidden fees.",
+  },
+  {
+    q: "What check intervals are available?",
+    a: "Free plans check every 60 minutes, while Paid and Yearly plans check every 5 minutes. Faster intervals are on the roadmap.",
+  },
+];
+
+
 const comparisons: { feature: string; rows: { uptime: CellValue; statuspage: CellValue; us: CellValue } }[] = [
   {
     feature: "Uptime monitoring",
@@ -73,57 +94,93 @@ export default function HomePage() {
       <SiteHeader />
       <main className="flex-1">
         {/* Hero */}
-        <section className="py-20 text-center">
-          <Container className="space-y-8">
-            <h1 className="glow-text mx-auto max-w-4xl text-display-lg-mobile leading-[1.2] tracking-[-0.02em] text-on-surface md:text-display-lg md:leading-[1.1]">
-              Monitoring + Status Page.
-              <br />
-              Finally in one place.
-            </h1>
-            <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
-              Get reliable uptime monitoring and beautiful status pages without overpaying. Save up to{" "}
-              <span className="text-on-surface">$399/mo</span> compared to competitors.
-            </p>
-            <div className="pt-8">
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-4 text-headline-md text-on-primary transition-colors hover:bg-primary/90"
-              >
-                Start monitoring for free
-              </Link>
-            </div>
-            <p className="font-mono text-code-label text-outline">No credit card required</p>
+        <section className="relative overflow-hidden py-20 text-center md:py-28">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-[-220px] h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]"
+          />
+          <Container className="relative space-y-8">
+            <Reveal>
+              <div className="inline-flex items-center gap-2 rounded-full border border-card-border bg-card px-3 py-1.5 font-mono text-code-label text-on-surface-variant">
+                <span className="status-pulse h-2 w-2 rounded-full bg-up" />
+                Monitoring in production
+              </div>
+            </Reveal>
+            <Reveal delay={80}>
+              <h1 className="glow-text mx-auto max-w-4xl text-display-lg-mobile leading-[1.2] tracking-[-0.02em] text-on-surface md:text-[64px] md:leading-[1.08]">
+                Monitoring + Status Page.
+                <br />
+                Finally in one place.
+              </h1>
+            </Reveal>
+            <Reveal delay={160}>
+              <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
+                Get reliable uptime monitoring and beautiful status pages without overpaying. Save up to{" "}
+                <span className="text-on-surface">$399/mo</span> compared to competitors.
+              </p>
+            </Reveal>
+            <Reveal delay={240}>
+              <div className="flex flex-col items-center justify-center gap-4 pt-8 sm:flex-row">
+                <Link
+                  href="/dashboard"
+                  className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-8 py-4 text-headline-md text-on-primary transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] sm:w-auto"
+                >
+                  Start monitoring for free
+                </Link>
+                <Link
+                  href="/#pricing"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-card-border px-8 py-4 text-headline-md text-on-surface transition-all duration-200 hover:border-surface-variant hover:bg-surface-container-low active:scale-[0.98] sm:w-auto"
+                >
+                  <Icon name="currency_bitcoin" size={18} />
+                  Pay via crypto
+                </Link>
+              </div>
+              <p className="mt-4 font-mono text-code-label text-outline">No credit card required</p>
+            </Reveal>
           </Container>
         </section>
 
         {/* Social proof */}
-        <section className="border-y border-card-border py-12 text-center">
+        <section className="border-y border-card-border py-12">
           <Container>
-            <p className="mb-6 font-mono text-code-label uppercase tracking-widest text-on-surface-variant">
+            <p className="mb-8 text-center font-mono text-code-label uppercase tracking-widest text-on-surface-variant">
               Trusted by over 1,000+ developers
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-10 opacity-50">
-              {["TechCorp", "DevOps Inc", "CloudScale", "StartUp.io", "Vertex"].map((name) => (
-                <span key={name} className="text-headline-md text-on-surface">
-                  {name}
-                </span>
-              ))}
+            <div className="relative overflow-hidden" style={{ maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)" }}>
+              <div className="animate-marquee flex w-max items-center gap-16">
+                {[0, 1].map((copy) => (
+                  <div key={copy} className="flex items-center gap-16" aria-hidden={copy === 1}>
+                    {["TechCorp", "DevOps Inc", "CloudScale", "StartUp.io", "Vertex", "NordStack", "Hexlab", "Railyard"].map((name) => (
+                      <span key={`${copy}-${name}`} className="flex items-center gap-2 text-headline-md text-on-surface-variant">
+                        <Icon name="monitoring" size={20} className="text-primary/60" />
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </Container>
         </section>
 
         {/* Comparison */}
-        <section className="py-16">
+        <section className="scroll-mt-24 py-16">
           <Container>
-            <h2 className="mb-12 text-center text-headline-md text-on-surface">
-              Perfect balance of features and price
-            </h2>
+            <Reveal>
+              <div className="mb-4 text-center font-mono text-code-label uppercase tracking-widest text-primary">
+                Why TopStatus
+              </div>
+              <h2 className="mb-12 text-center text-headline-md text-on-surface">
+                Perfect balance of features and price
+              </h2>
+            </Reveal>
+            <Reveal delay={80}>
             <div className="overflow-hidden rounded-xl border border-card-border bg-card">
               <div className="grid grid-cols-4 gap-4 border-b border-card-border p-6 font-mono text-code-label text-on-surface-variant">
                 <div>Feature</div>
                 <div className="text-center">UptimeRobot</div>
                 <div className="text-center">StatusPage</div>
-                <div className="text-center font-bold text-primary">TopStatus</div>
+                <div className="rounded-md bg-primary/5 text-center font-bold text-primary">TopStatus</div>
               </div>
               {comparisons.map((row, i) => (
                 <div
@@ -139,56 +196,68 @@ export default function HomePage() {
                   <div className="flex justify-center">
                     <ComparisonCell value={row.rows.statuspage} />
                   </div>
-                  <div className="flex justify-center">
+                  <div className="flex justify-center rounded-md bg-primary/5">
                     <ComparisonCell value={row.rows.us} highlight={row.feature === "Cost"} />
                   </div>
                 </div>
               ))}
             </div>
+            </Reveal>
           </Container>
         </section>
 
         {/* Features bento */}
-        <section id="features" className="py-16">
+        <section id="features" className="scroll-mt-24 py-16">
           <Container>
-            <h2 className="mb-12 text-headline-md text-on-surface">Everything you need for control</h2>
+            <Reveal>
+              <div className="mb-4 text-center font-mono text-code-label uppercase tracking-widest text-primary">
+                Features
+              </div>
+              <h2 className="mb-12 text-center text-headline-md text-on-surface">
+                Everything you need for control
+              </h2>
+            </Reveal>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {features.map((f, i) => (
-                <div
-                  key={f.title}
-                  className={`flex flex-col justify-between rounded-xl border border-card-border bg-card p-6 ${
-                    f.chart || i === 3 ? "md:col-span-2" : ""
-                  }`}
-                >
-                  <div>
-                    <Icon name={f.icon} filled size={32} className={`mb-4 ${f.color}`} />
-                    <h3 className="mb-2 text-headline-md text-on-surface">{f.title}</h3>
-                    <p className="text-body-sm text-on-surface-variant">{f.text}</p>
-                  </div>
-                  {f.chart && (
-                    <div className="mt-8 flex h-24 items-end gap-1 opacity-70">
-                      <div className="h-full w-full rounded-t-sm bg-up" />
-                      <div className="h-5/6 w-full rounded-t-sm bg-up" />
-                      <div className="h-2/6 w-full rounded-t-sm bg-down" />
-                      <div className="h-full w-full rounded-t-sm bg-up" />
-                      <div className="h-full w-full rounded-t-sm bg-up" />
-                      <div className="h-4/6 w-full rounded-t-sm bg-up" />
-                      <div className="h-full w-full rounded-t-sm bg-up" />
-                      <div className="h-1/6 w-full rounded-t-sm bg-tertiary" />
-                      <div className="h-full w-full rounded-t-sm bg-up" />
-                      <div className="h-full w-full rounded-t-sm bg-up" />
+                <Reveal key={f.title} delay={i * 80} className={f.chart || i === 3 ? "md:col-span-2" : ""}>
+                  <div
+                    className={`flex h-full flex-col justify-between rounded-xl border border-card-border bg-card p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-surface-variant hover:bg-surface-container-lowest`}
+                  >
+                    <div>
+                      <Icon name={f.icon} filled size={32} className={`mb-4 ${f.color}`} />
+                      <h3 className="mb-2 text-headline-md text-on-surface">{f.title}</h3>
+                      <p className="text-body-sm text-on-surface-variant">{f.text}</p>
                     </div>
-                  )}
-                </div>
+                    {f.chart && (
+                      <div className="mt-8 flex h-24 items-end gap-1 opacity-70">
+                        <div className="h-full w-full rounded-t-sm bg-up" />
+                        <div className="h-5/6 w-full rounded-t-sm bg-up" />
+                        <div className="h-2/6 w-full rounded-t-sm bg-down" />
+                        <div className="h-full w-full rounded-t-sm bg-up" />
+                        <div className="h-full w-full rounded-t-sm bg-up" />
+                        <div className="h-4/6 w-full rounded-t-sm bg-up" />
+                        <div className="h-full w-full rounded-t-sm bg-up" />
+                        <div className="h-1/6 w-full rounded-t-sm bg-tertiary" />
+                        <div className="h-full w-full rounded-t-sm bg-up" />
+                        <div className="h-full w-full rounded-t-sm bg-up" />
+                      </div>
+                    )}
+                  </div>
+                </Reveal>
               ))}
             </div>
           </Container>
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-16">
+        <section id="pricing" className="scroll-mt-24 py-16">
           <Container>
-            <h2 className="mb-12 text-center text-headline-md text-on-surface">Simple, honest pricing</h2>
+            <Reveal>
+              <div className="mb-4 text-center font-mono text-code-label uppercase tracking-widest text-primary">
+                Plans
+              </div>
+              <h2 className="mb-12 text-center text-headline-md text-on-surface">Simple, honest pricing</h2>
+            </Reveal>
             <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
               {[
                 {
@@ -216,7 +285,6 @@ export default function HomePage() {
                     "Telegram & email alerts",
                     "90-day history",
                   ],
-                  featured: true,
                 },
                 {
                   key: "yearly" as const,
@@ -227,6 +295,7 @@ export default function HomePage() {
                   cadence: "Checks every 5 minutes",
                   cta: "Pay via crypto",
                   badge: "BEST VALUE",
+                  featured: true,
                   features: [
                     "Everything in Paid",
                     "5-minute checks",
@@ -235,23 +304,18 @@ export default function HomePage() {
                     "Save $78 vs monthly",
                   ],
                 },
-              ].map((plan) => (
+              ].map((plan, i) => (
+                <Reveal key={plan.name} delay={i * 80} className="h-full">
                 <div
-                  key={plan.name}
-                  className={`flex flex-col rounded-xl border p-6 ${
+                  className={`flex h-full flex-col rounded-xl border p-6 transition-all duration-200 hover:-translate-y-0.5 ${
                     plan.featured
-                      ? "border-primary bg-primary/5"
-                      : "border-card-border bg-card"
+                      ? "border-primary bg-primary/5 shadow-[0_0_40px_rgba(173,198,255,0.15)]"
+                      : "border-card-border bg-card hover:border-surface-variant"
                   }`}
                 >
                   <div className="mb-6">
                     <div className="mb-1 flex items-center gap-2">
                       <span className="text-headline-md text-on-surface">{plan.name}</span>
-                      {plan.featured && (
-                        <span className="rounded bg-primary px-2 py-0.5 font-mono text-code-label text-on-primary">
-                          POPULAR
-                        </span>
-                      )}
                       {plan.badge && (
                         <span className="rounded bg-secondary/15 px-2 py-0.5 font-mono text-code-label text-secondary">
                           {plan.badge}
@@ -291,6 +355,34 @@ export default function HomePage() {
                     <PayPlanButton plan={plan.key} label={plan.cta} primary={plan.featured} />
                   )}
                 </div>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq" className="scroll-mt-24 py-16">
+          <Container className="max-w-3xl">
+            <Reveal>
+              <div className="mb-4 text-center font-mono text-code-label uppercase tracking-widest text-primary">
+                FAQ
+              </div>
+              <h2 className="mb-12 text-center text-headline-md text-on-surface">Questions, answered</h2>
+            </Reveal>
+            <div className="flex flex-col gap-4">
+              {faq.map((item, i) => (
+                <Reveal key={item.q} delay={i * 60}>
+                  <details className="group rounded-xl border border-card-border bg-card transition-colors hover:border-surface-variant">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6 text-body-sm font-medium text-on-surface">
+                      {item.q}
+                      <span className="text-on-surface-variant transition-transform duration-200 group-open:rotate-45">
+                        <Icon name="add" size={20} />
+                      </span>
+                    </summary>
+                    <div className="px-6 pb-6 text-body-sm text-on-surface-variant">{item.a}</div>
+                  </details>
+                </Reveal>
               ))}
             </div>
           </Container>
