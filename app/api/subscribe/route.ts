@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   const supabase = createAdminClient();
   const { error } = await supabase.from("subscriptions").upsert(
     { org_id: DEFAULT_ORG_ID, channel: "email", target: email },
-    { onConflict: "channel,target" }
+    { onConflict: "org_id,channel,target" }
   );
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
