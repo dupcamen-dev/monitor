@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { secToInterval } from "@/lib/interval";
 
 function fmtDur(ms: number) {
@@ -13,6 +14,10 @@ function fmtDur(ms: number) {
   return `${sec}s`;
 }
 
+/* One shared throttle for auto-refreshes so N overdue bars don't spam router.refresh(). */
+const AUTO_REFRESH_EVERY_MS = 30_000;
+let lastAutoRefreshAt = 0;
+
 export function NextCheckBar({
   lastCheckedAt,
   intervalSec,
@@ -22,12 +27,34 @@ export function NextCheckBar({
   intervalSec: number;
   paused?: boolean;
 }) {
+  const router = useRouter();
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  const intervalMs = intervalSec * 1000;
+  const checkedAt = lastCheckedAt ? new Date(lastCheckedAt).getTime() : null;
+  const elapsed = checkedAt !== null ? now - checkedAt : 0;
+  const remaining = intervalMs - elapsed;
+  const overdue = checkedAt !== null && elapsed >= intervalMs;
+
+  /* While overdue, refresh the page periodically so the bar resets as soon as
+     the cron lands the next check. */
+  useEffect(() => {
+    if (!overdue || paused) return;
+    const attempt = () => {
+      if (Date.now() - lastAutoRefreshAt >= AUTO_REFRESH_EVERY_MS) {
+        lastAutoRefreshAt = Date.now();
+        router.refresh();
+      }
+    };
+    attempt();
+    const id = setInterval(attempt, AUTO_REFRESH_EVERY_MS);
+    return () => clearInterval(id);
+  }, [overdue, paused, router]);
 
   if (paused) {
     return (
@@ -47,10 +74,6 @@ export function NextCheckBar({
     );
   }
 
-  const intervalMs = intervalSec * 1000;
-  const elapsed = now - new Date(lastCheckedAt).getTime();
-  const remaining = intervalMs - elapsed;
-  const overdue = elapsed >= intervalMs;
   const progress = Math.min(Math.max(elapsed / intervalMs, 0), 1);
 
   return (
