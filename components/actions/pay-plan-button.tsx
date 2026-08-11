@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { useToast } from "@/components/ui/toast";
 
 export type PayablePlan = "paid" | "yearly";
+
+type PlanState =
+  | { loaded: false }
+  | { loaded: true; loggedIn: boolean; yearlyActive: boolean };
 
 export function PayPlanButton({
   plan,
@@ -17,8 +21,37 @@ export function PayPlanButton({
   primary?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
+  const [state, setState] = useState<PlanState>({ loaded: false });
   const router = useRouter();
   const { show } = useToast();
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/settings/plan", { cache: "no-store" });
+        if (cancelled) return;
+        if (res.status === 401) {
+          setState({ loaded: true, loggedIn: false, yearlyActive: false });
+          return;
+        }
+        const data = await res.json().catch(() => null);
+        if (cancelled) return;
+        const yearlyActive =
+          data?.plan === "yearly" &&
+          data?.expiresAt !== null &&
+          new Date(data.expiresAt).getTime() > Date.now();
+        setState({ loaded: true, loggedIn: true, yearlyActive });
+      } catch {
+        if (!cancelled) setState({ loaded: true, loggedIn: false, yearlyActive: false });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const locked = state.loaded && state.loggedIn && state.yearlyActive && plan === "paid";
 
   const pay = async () => {
     setBusy(true);
@@ -40,6 +73,19 @@ export function PayPlanButton({
       setBusy(false);
     }
   };
+
+  if (locked) {
+    return (
+      <button
+        disabled
+        title="Monthly is unavailable while your yearly plan is active."
+        className="mt-auto inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-card-border px-4 py-3 font-mono text-code-label text-on-surface-variant opacity-70"
+      >
+        <Icon name="lock" size={16} />
+        Unavailable
+      </button>
+    );
+  }
 
   return (
     <button
