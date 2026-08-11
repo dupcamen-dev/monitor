@@ -17,6 +17,7 @@ type DbMonitor = {
   interval_sec: number;
   paused: boolean;
   created_at: string;
+  last_checked_at: string | null;
 };
 
 export type OrgPlan = "free" | "paid" | "yearly";
@@ -128,6 +129,8 @@ function buildMonitor(
     uptime90: uptime(withData),
     history,
     interval: secToInterval(cadenceSec),
+    intervalSec: cadenceSec,
+    lastCheckedAt: r.last_checked_at ?? null,
     paused: r.paused,
   };
 }

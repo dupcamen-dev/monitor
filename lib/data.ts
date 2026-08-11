@@ -1,3 +1,5 @@
+import { intervalToSec } from "@/lib/interval";
+
 export type MonitorStatus = "up" | "degraded" | "down";
 export type DayState = "up" | "partial" | "down" | "nodata";
 export type MonitorKind = "website" | "api" | "database" | "dashboard";
@@ -13,6 +15,8 @@ export interface Monitor {
   uptime90: string;
   history: DayState[];
   interval: string;
+  intervalSec: number;
+  lastCheckedAt: string | null;
   paused?: boolean;
 }
 
@@ -105,6 +109,8 @@ function makeMonitor(
     uptime30: uptimePct(history.slice(-30)),
     uptime90: uptimePct(history),
     interval,
+    intervalSec: intervalToSec(interval),
+    lastCheckedAt: null,
   };
 }
 

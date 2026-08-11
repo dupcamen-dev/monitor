@@ -6,6 +6,7 @@ import { Icon } from "@/components/icon";
 import { Modal } from "@/components/ui/modal";
 import { Field, inputClass } from "@/components/ui/field";
 import { useToast } from "@/components/ui/toast";
+import { NextCheckBar } from "@/components/dashboard/next-check-bar";
 import type { Monitor } from "@/lib/data";
 
 const filters: { id: MonitorStatus | "all"; label: string }[] = [
@@ -164,8 +165,14 @@ export function MonitorsList({ monitors }: { monitors: Monitor[] }) {
                     <span className="text-on-surface-variant">/ 90d</span>
                   </div>
                 </td>
-                <td className="p-4 font-mono text-code-label text-on-surface-variant">
-                  every {m.interval}
+                <td className="p-4">
+                  <div className="min-w-[200px]">
+                    <NextCheckBar
+                      lastCheckedAt={m.lastCheckedAt}
+                      intervalSec={m.intervalSec}
+                      paused={m.paused}
+                    />
+                  </div>
                 </td>
                 <td className="p-4">
                   <button
