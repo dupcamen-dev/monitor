@@ -51,7 +51,7 @@ const features = [
     icon: "monitoring",
     color: "text-primary",
     title: "Real-time monitoring",
-    text: "Check your services every 5 minutes on paid plans, hourly on free. Instant downtime detection with auto-created incidents.",
+    text: "Check your services every minute on paid plans, hourly on free. Instant downtime detection with auto-created incidents.",
     chart: true,
   },
   {
@@ -94,7 +94,7 @@ const faq = [
   },
   {
     q: "What check intervals are available?",
-    a: "Free plans check every 60 minutes, while Paid and Yearly plans check every 5 minutes. Faster intervals are on the roadmap.",
+    a: "Free plans check every 60 minutes, while Paid and Yearly plans check every minute.",
   },
 ];
 
@@ -320,12 +320,12 @@ export default function HomePage() {
                   price: "$19",
                   billing: "/ month",
                   tagline: "For teams that need speed",
-                  cadence: "Checks every 5 minutes",
+                  cadence: "Checks every minute",
                   cta: "Pay via crypto",
                   features: [
                     "Unlimited monitors",
                     "1 status page",
-                    "5-minute checks",
+                    "1-minute checks",
                     "Telegram & email alerts",
                     "90-day history",
                   ],
@@ -336,13 +336,13 @@ export default function HomePage() {
                   price: "$150",
                   billing: "/ year",
                   tagline: "Best value for power users",
-                  cadence: "Checks every 5 minutes",
+                  cadence: "Checks every minute",
                   cta: "Pay via crypto",
                   badge: "BEST VALUE",
                   featured: true,
                   features: [
                     "Everything in Paid",
-                    "5-minute checks",
+                    "1-minute checks",
                     "Telegram, email & Discord alerts",
                     "90-day history",
                     "Save $78 vs monthly",

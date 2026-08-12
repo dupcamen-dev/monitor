@@ -18,14 +18,14 @@ const plans: { key: PlanKey; name: string; price: string; cadence: string; desc:
     key: "paid",
     name: "Paid",
     price: "$19/mo",
-    cadence: "checks every 5 minutes",
-    desc: "Faster detection with 5-minute checks. Crypto checkout via NowPayments.",
+    cadence: "checks every minute",
+    desc: "Faster detection with 1-minute checks. Crypto checkout via NowPayments.",
   },
   {
     key: "yearly",
     name: "Yearly",
     price: "$150/yr",
-    cadence: "checks every 5 minutes",
+    cadence: "checks every minute",
     desc: "One year of Pro checks. Crypto checkout via NowPayments.",
   },
 ];
