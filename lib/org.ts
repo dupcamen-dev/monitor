@@ -29,6 +29,8 @@ export async function getUserOrg(): Promise<UserOrg | null> {
     .from("organizations")
     .select("id, plan, name, slug, timezone")
     .eq("owner_id", user.id)
+    .order("created_at", { ascending: true })
+    .limit(1)
     .maybeSingle();
 
   if (existing) {
@@ -56,12 +58,37 @@ export async function getUserOrg(): Promise<UserOrg | null> {
     .select("id, plan, name, slug, timezone")
     .single();
 
-  if (error || !created) return null;
-  return {
-    id: created.id,
-    plan: normalizePlan(created.plan),
-    name: created.name,
-    slug: created.slug,
-    timezone: created.timezone || "Europe/Kyiv",
-  };
+  if (created) {
+    return {
+      id: created.id,
+      plan: normalizePlan(created.plan),
+      name: created.name,
+      slug: created.slug,
+      timezone: created.timezone || "Europe/Kyiv",
+    };
+  }
+
+  if (error) {
+    // A concurrent request probably created the org first (unique owner_id).
+    // Fall back to the row it inserted instead of failing.
+    const { data: raced } = await admin
+      .from("organizations")
+      .select("id, plan, name, slug, timezone")
+      .eq("owner_id", user.id)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (raced) {
+      return {
+        id: raced.id,
+        plan: normalizePlan(raced.plan),
+        name: raced.name,
+        slug: raced.slug,
+        timezone: raced.timezone || "Europe/Kyiv",
+      };
+    }
+  }
+
+  return null;
 }
