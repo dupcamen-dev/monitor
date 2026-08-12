@@ -52,7 +52,7 @@ export async function SiteHeader() {
               </Link>
               <Link
                 href="/login"
-                className="rounded bg-primary px-4 py-2 text-body-sm font-medium text-on-primary transition-colors hover:bg-primary/90"
+                className="btn-shine rounded bg-primary px-4 py-2 text-body-sm font-medium text-on-primary shadow-premium transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90"
               >
                 Start for free
               </Link>

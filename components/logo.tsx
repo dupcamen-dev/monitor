@@ -6,7 +6,7 @@ export function Logo({ size = "md", href = "/" }: { size?: "sm" | "md"; href?: s
   return (
     <Link href={href} className="flex items-center gap-2.5">
       <span
-        className={`${box} flex items-center justify-center rounded bg-primary font-bold text-on-primary`}
+        className={`${box} flex items-center justify-center rounded bg-gradient-to-br from-primary via-primary to-secondary-fixed-dim font-bold text-on-primary shadow-premium`}
       >
         U
       </span>

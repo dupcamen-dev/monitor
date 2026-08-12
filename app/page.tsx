@@ -7,6 +7,7 @@ import { Icon } from "@/components/icon";
 import { AssistLoopWidget } from "@/components/assistloop-widget";
 import { PayPlanButton } from "@/components/actions/pay-plan-button";
 import { Reveal } from "@/components/actions/reveal";
+import { HeroMockup } from "@/components/site/hero-mockup";
 import { createAdminClient } from "@/lib/supabase";
 
 const DEFAULT_SEO = {
@@ -128,48 +129,65 @@ export default function HomePage() {
       <SiteHeader />
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative overflow-hidden py-20 text-center md:py-28">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-[-220px] h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]"
-          />
+        <section className="relative overflow-hidden pb-10 pt-20 text-center md:pt-28">
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="animate-aurora absolute left-1/2 top-[-280px] h-[640px] w-[840px] rounded-full bg-primary/15 blur-[140px]" />
+            <div
+              className="animate-aurora-drift absolute left-[8%] top-[36%] h-[340px] w-[340px] rounded-full bg-secondary/10 blur-[120px]"
+              style={{ animationDelay: "-6s" }}
+            />
+            <div
+              className="animate-aurora-drift absolute right-[4%] top-[18%] h-[420px] w-[420px] rounded-full bg-tertiary/10 blur-[120px]"
+              style={{ animationDelay: "-11s" }}
+            />
+            <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_65%_55%_at_50%_0%,black,transparent)]" />
+          </div>
           <Container className="relative space-y-8">
-            <Reveal>
-              <div className="inline-flex items-center gap-2 rounded-full border border-card-border bg-card px-3 py-1.5 font-mono text-code-label text-on-surface-variant">
+            <Reveal variant="blur">
+              <div className="inline-flex items-center gap-2 rounded-full border border-card-border bg-card/80 px-4 py-2 font-mono text-code-label text-on-surface-variant shadow-premium backdrop-blur">
                 <span className="status-pulse h-2 w-2 rounded-full bg-up" />
                 Monitoring in production
+                <Icon name="sparkles" size={14} className="text-secondary" />
               </div>
             </Reveal>
-            <Reveal delay={80}>
+            <Reveal delay={80} variant="blur">
               <h1 className="glow-text mx-auto max-w-4xl text-display-lg-mobile leading-[1.2] tracking-[-0.02em] text-on-surface md:text-[64px] md:leading-[1.08]">
                 Monitoring + Status Page.
                 <br />
-                Finally in one place.
+                <span className="text-gradient">Finally in one place.</span>
               </h1>
             </Reveal>
-            <Reveal delay={160}>
+            <Reveal delay={160} variant="blur">
               <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
                 Get reliable uptime monitoring and beautiful status pages without overpaying. Save up to{" "}
-                <span className="text-on-surface">$399/mo</span> compared to competitors.
+                <span className="font-semibold text-on-surface">$399/mo</span> compared to competitors.
               </p>
             </Reveal>
-            <Reveal delay={240}>
+            <Reveal delay={240} variant="blur">
               <div className="flex flex-col items-center justify-center gap-4 pt-8 sm:flex-row">
                 <Link
                   href="/dashboard"
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-8 py-4 text-headline-md text-on-primary transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] sm:w-auto"
+                  className="btn-shine group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-headline-md font-semibold text-on-primary shadow-deep transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 sm:w-auto"
                 >
                   Start monitoring for free
+                  <Icon
+                    name="arrow_forward"
+                    size={20}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
                 </Link>
                 <Link
                   href="/#pricing"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-card-border px-8 py-4 text-headline-md text-on-surface transition-all duration-200 hover:border-surface-variant hover:bg-surface-container-low active:scale-[0.98] sm:w-auto"
+                  className="card-lift inline-flex w-full items-center justify-center gap-2 rounded-lg border border-card-border bg-card px-8 py-4 text-headline-md text-on-surface sm:w-auto"
                 >
-                  <Icon name="currency_bitcoin" size={18} />
+                  <Icon name="currency_bitcoin" size={18} className="text-secondary" />
                   Pay via crypto
                 </Link>
               </div>
               <p className="mt-4 font-mono text-code-label text-outline">No credit card required</p>
+            </Reveal>
+            <Reveal variant="scale" delay={320} className="relative z-10 mx-auto mt-16 max-w-4xl">
+              <HeroMockup />
             </Reveal>
           </Container>
         </section>
@@ -194,7 +212,7 @@ export default function HomePage() {
                       { ticker: "BTC", net: "Bitcoin", color: "text-secondary" },
                     ].map((c) => (
                       <span key={`${copy}-${c.ticker}-${c.net}`} className="flex items-center gap-3">
-                        <span className={`flex h-8 w-14 items-center justify-center rounded-md border border-card-border bg-surface-container-lowest font-mono text-code-label ${c.color}`}>
+                        <span className={`flex h-8 w-14 items-center justify-center rounded-md border border-card-border bg-surface-container-lowest shadow-premium font-mono text-code-label transition-transform duration-200 hover:-translate-y-0.5 ${c.color}`}>
                           {c.ticker}
                         </span>
                         <span className="text-headline-md text-on-surface-variant">{c.net}</span>
@@ -218,33 +236,41 @@ export default function HomePage() {
                 Perfect balance of features and price
               </h2>
             </Reveal>
-            <Reveal delay={80}>
-            <div className="overflow-hidden rounded-xl border border-card-border bg-card">
-              <div className="grid grid-cols-4 gap-4 border-b border-card-border p-6 font-mono text-code-label text-on-surface-variant">
-                <div>Feature</div>
-                <div className="text-center">UptimeRobot</div>
-                <div className="text-center">StatusPage</div>
-                <div className="rounded-md bg-primary/5 text-center font-bold text-primary">TopStatus</div>
-              </div>
-              {comparisons.map((row, i) => (
+            <Reveal delay={80} variant="scale">
+            <div className="card-lift overflow-hidden rounded-xl border border-card-border bg-card">
+              <div className="relative">
                 <div
-                  key={row.feature}
-                  className={`grid grid-cols-4 gap-4 p-6 transition-colors hover:bg-surface-container-low ${
-                    i < comparisons.length - 1 ? "border-b border-card-border" : ""
-                  }`}
-                >
-                  <div className="text-body-sm text-on-surface">{row.feature}</div>
-                  <div className="flex justify-center">
-                    <ComparisonCell value={row.rows.uptime} />
-                  </div>
-                  <div className="flex justify-center">
-                    <ComparisonCell value={row.rows.statuspage} />
-                  </div>
-                  <div className="flex justify-center rounded-md bg-primary/5">
-                    <ComparisonCell value={row.rows.us} highlight={row.feature === "Cost"} />
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-0 left-3/4 right-0 bg-gradient-to-r from-transparent to-primary/5"
+                />
+                <div className="relative grid grid-cols-4 gap-4 border-b border-card-border p-6 font-mono text-code-label text-on-surface-variant">
+                  <div>Feature</div>
+                  <div className="text-center">UptimeRobot</div>
+                  <div className="text-center">StatusPage</div>
+                  <div className="rounded-md bg-primary/10 text-center font-bold text-primary shadow-[0_0_24px_rgba(173,198,255,0.25)]">
+                    TopStatus
                   </div>
                 </div>
-              ))}
+                {comparisons.map((row, i) => (
+                  <div
+                    key={row.feature}
+                    className={`group relative grid grid-cols-4 gap-4 p-6 transition-colors hover:bg-surface-container-low ${
+                      i < comparisons.length - 1 ? "border-b border-card-border" : ""
+                    }`}
+                  >
+                    <div className="text-body-sm text-on-surface">{row.feature}</div>
+                    <div className="flex justify-center">
+                      <ComparisonCell value={row.rows.uptime} />
+                    </div>
+                    <div className="flex justify-center">
+                      <ComparisonCell value={row.rows.statuspage} />
+                    </div>
+                    <div className="flex justify-center rounded-md bg-primary/10">
+                      <ComparisonCell value={row.rows.us} highlight={row.feature === "Cost"} />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             </Reveal>
           </Container>
@@ -263,27 +289,45 @@ export default function HomePage() {
             </Reveal>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {features.map((f, i) => (
-                <Reveal key={f.title} delay={i * 80} className={f.chart || i === 2 ? "md:col-span-2" : ""}>
-                  <div
-                    className={`flex h-full flex-col justify-between rounded-xl border border-card-border bg-card p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-surface-variant hover:bg-surface-container-lowest`}
-                  >
-                    <div>
-                      <Icon name={f.icon} filled size={32} className={`mb-4 ${f.color}`} />
+                <Reveal
+                  key={f.title}
+                  delay={i * 80}
+                  variant={i % 2 === 0 ? "left" : "right"}
+                  className={f.chart || i === 2 ? "md:col-span-2" : ""}
+                >
+                  <div className="card-lift group relative flex h-full flex-col justify-between overflow-hidden rounded-xl border border-card-border bg-card p-6">
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute -right-24 -top-24 h-52 w-52 rounded-full bg-primary/0 blur-3xl transition-colors duration-500 group-hover:bg-primary/10"
+                    />
+                    <div className="relative">
+                      <div
+                        className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${
+                          f.color === "text-secondary" ? "bg-secondary/10" : "bg-primary/10"
+                        }`}
+                      >
+                        <Icon name={f.icon} filled size={24} className={f.color} />
+                      </div>
                       <h3 className="mb-2 text-headline-md text-on-surface">{f.title}</h3>
                       <p className="text-body-sm text-on-surface-variant">{f.text}</p>
                     </div>
                     {f.chart && (
-                      <div className="mt-8 flex h-24 items-end gap-1 opacity-70">
-                        <div className="h-full w-full rounded-t-sm bg-up" />
-                        <div className="h-5/6 w-full rounded-t-sm bg-up" />
-                        <div className="h-2/6 w-full rounded-t-sm bg-down" />
-                        <div className="h-full w-full rounded-t-sm bg-up" />
-                        <div className="h-full w-full rounded-t-sm bg-up" />
-                        <div className="h-4/6 w-full rounded-t-sm bg-up" />
-                        <div className="h-full w-full rounded-t-sm bg-up" />
-                        <div className="h-1/6 w-full rounded-t-sm bg-tertiary" />
-                        <div className="h-full w-full rounded-t-sm bg-up" />
-                        <div className="h-full w-full rounded-t-sm bg-up" />
+                      <div className="relative mt-8">
+                        <div className="absolute right-0 top-0 z-10 flex items-center gap-1.5 rounded-full bg-up/10 px-2.5 py-1 font-mono text-code-label text-up">
+                          <span className="status-pulse h-1.5 w-1.5 rounded-full bg-up" />
+                          LIVE
+                        </div>
+                        <div className="flex h-24 items-end gap-1.5">
+                          {[100, 95, 38, 100, 100, 72, 100, 18, 100, 100].map((h, bi) => (
+                            <div
+                              key={bi}
+                              className={`bar-grow w-full rounded-t-sm ${
+                                h === 38 ? "bg-tertiary" : h === 18 ? "bg-down" : "bg-up"
+                              }`}
+                              style={{ height: `${h}%`, animationDelay: `${0.4 + bi * 0.07}s` }}
+                            />
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -349,19 +393,27 @@ export default function HomePage() {
                   ],
                 },
               ].map((plan, i) => (
-                <Reveal key={plan.name} delay={i * 80} className="h-full">
+                <Reveal key={plan.name} delay={i * 80} variant={i === 1 ? "scale" : "up"} className="h-full">
                 <div
-                  className={`flex h-full flex-col rounded-xl border p-6 transition-all duration-200 hover:-translate-y-0.5 ${
+                  className={`relative flex h-full flex-col rounded-xl p-6 ${
                     plan.featured
-                      ? "border-primary bg-primary/5 shadow-[0_0_40px_rgba(173,198,255,0.15)]"
-                      : "border-card-border bg-card hover:border-surface-variant"
+                      ? "gradient-border shadow-deep md:-translate-y-2"
+                      : "card-lift border border-card-border bg-card"
                   }`}
                 >
-                  <div className="mb-6">
+                  {plan.featured && (
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl"
+                    >
+                      <div className="absolute -top-24 left-1/2 h-48 w-72 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
+                    </div>
+                  )}
+                  <div className="relative mb-6">
                     <div className="mb-1 flex items-center gap-2">
                       <span className="text-headline-md text-on-surface">{plan.name}</span>
                       {plan.badge && (
-                        <span className="rounded bg-secondary/15 px-2 py-0.5 font-mono text-code-label text-secondary">
+                        <span className="animate-float rounded bg-secondary/15 px-2 py-0.5 font-mono text-code-label text-secondary">
                           {plan.badge}
                         </span>
                       )}
@@ -376,7 +428,7 @@ export default function HomePage() {
                       {plan.cadence}
                     </p>
                   </div>
-                  <ul className="mb-8 flex flex-col gap-3">
+                  <ul className="relative mb-8 flex flex-col gap-3">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-center gap-2 text-body-sm text-on-surface-variant">
                         <Icon name="check_circle" filled size={18} className="text-secondary" />
@@ -389,14 +441,16 @@ export default function HomePage() {
                       href="/dashboard"
                       className={`mt-auto rounded-lg px-4 py-3 text-center font-mono text-code-label transition-colors ${
                         plan.featured
-                          ? "bg-primary text-on-primary hover:bg-primary/90"
-                          : "border border-card-border text-on-surface hover:border-surface-variant"
+                          ? "btn-shine bg-primary text-on-primary hover:bg-primary/90"
+                          : "border border-card-border text-on-surface hover:border-surface-variant hover:bg-surface-container-low"
                       }`}
                     >
                       {plan.cta}
                     </Link>
                   ) : (
-                    <PayPlanButton plan={plan.key} label={plan.cta} primary={plan.featured} />
+                    <div className="relative mt-auto">
+                      <PayPlanButton plan={plan.key} label={plan.cta} primary={plan.featured} />
+                    </div>
                   )}
                 </div>
                 </Reveal>
@@ -416,15 +470,17 @@ export default function HomePage() {
             </Reveal>
             <div className="flex flex-col gap-4">
               {faq.map((item, i) => (
-                <Reveal key={item.q} delay={i * 60}>
-                  <details className="group rounded-xl border border-card-border bg-card transition-colors hover:border-surface-variant">
+                <Reveal key={item.q} delay={i * 60} variant="blur">
+                  <details className="card-lift group grid grid-rows-[0fr] rounded-xl border border-card-border bg-card transition-[grid-template-rows,border-color] duration-300 ease-out hover:border-surface-variant open:grid-rows-[1fr]">
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6 text-body-sm font-medium text-on-surface">
                       {item.q}
                       <span className="text-on-surface-variant transition-transform duration-200 group-open:rotate-45">
                         <Icon name="add" size={20} />
                       </span>
                     </summary>
-                    <div className="px-6 pb-6 text-body-sm text-on-surface-variant">{item.a}</div>
+                    <div className="overflow-hidden">
+                      <div className="px-6 pb-6 text-body-sm text-on-surface-variant">{item.a}</div>
+                    </div>
                   </details>
                 </Reveal>
               ))}
