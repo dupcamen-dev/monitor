@@ -70,7 +70,7 @@ const sections = [
     items: [
       {
         name: "Questions?",
-        desc: "If you have questions about this policy or your data, email us at support@topstatus.space. We'll respond as soon as we can.",
+        desc: "If you have questions about this policy or your data, email us at ringoosamsungj710@gmail.com or message us on Telegram at @NothingUA. We'll respond as soon as we can.",
       },
     ],
   },

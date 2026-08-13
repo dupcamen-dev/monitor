@@ -122,6 +122,10 @@ const faq = [
     q: "What check intervals are available?",
     a: "Free plans check every 60 minutes, while Paid and Yearly plans check every minute.",
   },
+  {
+    q: "How can I contact you?",
+    a: "Email us at ringoosamsungj710@gmail.com or message us on Telegram at @NothingUA. We're happy to help with setup, billing, or anything else.",
+  },
 ];
 
 
