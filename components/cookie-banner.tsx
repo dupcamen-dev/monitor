@@ -43,7 +43,7 @@ export function CookieBanner() {
         </span>
         <p className="text-body-sm text-on-surface-variant">
           We use cookies to keep you signed in, analyze traffic and improve TopStatus. By continuing you accept our{" "}
-          <Link href="/#faq" className="text-on-surface underline decoration-primary/40 underline-offset-2 hover:text-primary">
+          <Link href="/cookie-policy" className="text-on-surface underline decoration-primary/40 underline-offset-2 hover:text-primary">
             cookie policy
           </Link>
           .
