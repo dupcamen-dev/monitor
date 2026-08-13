@@ -5,6 +5,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { ThemeScript } from "@/components/theme-script";
 import { ThemeHydration } from "@/components/theme-hydration";
 import { TrackVisit } from "@/components/track-visit";
+import { CookieBanner } from "@/components/cookie-banner";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ToastProvider>
           <ThemeHydration />
           <TrackVisit />
+          <CookieBanner />
           {children}
         </ToastProvider>
       </body>

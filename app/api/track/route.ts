@@ -34,6 +34,29 @@ export async function POST(request: Request) {
     }
 
     const admin = createAdminClient();
+
+    // Collapse reloads and repeated navigations into real visits:
+    // one row per (user, path) per 10 minutes, anonymous per path per 60s.
+    if (userId) {
+      const { data: recent } = await admin
+        .from("page_visits")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("path", path)
+        .gte("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString())
+        .limit(1);
+      if (recent?.length) return NextResponse.json({ ok: true });
+    } else {
+      const { data: recent } = await admin
+        .from("page_visits")
+        .select("id")
+        .eq("path", path)
+        .is("user_id", null)
+        .gte("created_at", new Date(Date.now() - 60 * 1000).toISOString())
+        .limit(1);
+      if (recent?.length) return NextResponse.json({ ok: true });
+    }
+
     await admin.from("page_visits").insert({ path, referrer, user_id: userId });
     return NextResponse.json({ ok: true });
   } catch {
