@@ -56,6 +56,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: org ? `${org.name} Status` : "Status",
     description: `Live status of ${org?.name ?? "this workspace"} — uptime and incidents.`,
+    alternates: { canonical: `/s/${slug}` },
+    openGraph: {
+      title: org ? `${org.name} Status` : "Status",
+      description: `Live status of ${org?.name ?? "this workspace"} — uptime and incidents.`,
+      url: `https://topstatus.space/s/${slug}`,
+      siteName: "TopStatus",
+      type: "website",
+      locale: "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: org ? `${org.name} Status` : "Status",
+      description: `Live status of ${org?.name ?? "this workspace"} — uptime and incidents.`,
+    },
   };
 }
 

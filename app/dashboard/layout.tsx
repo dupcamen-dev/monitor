@@ -6,6 +6,7 @@ import { isAdminEmail } from "@/lib/admin";
 
 export const metadata = {
   title: "Dashboard",
+  robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";

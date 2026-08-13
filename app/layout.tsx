@@ -20,6 +20,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://topstatus.space"),
+  applicationName: "TopStatus",
   title: {
     default: "TopStatus — Monitoring & Status Pages",
     template: "%s · TopStatus",

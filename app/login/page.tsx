@@ -5,6 +5,7 @@ import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 
 export const metadata: Metadata = {
   title: "Sign in",
+  robots: { index: false, follow: false },
 };
 
 export default function LoginPage() {

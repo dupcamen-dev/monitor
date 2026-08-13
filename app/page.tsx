@@ -33,17 +33,42 @@ export async function generateMetadata(): Promise<Metadata> {
       og_title?: string | null;
       og_description?: string | null;
     } | null;
+    const title = s?.title || DEFAULT_SEO.title;
+    const description = s?.description || DEFAULT_SEO.description;
     return {
-      title: s?.title || DEFAULT_SEO.title,
-      description: s?.description || DEFAULT_SEO.description,
+      title,
+      description,
       keywords: s?.keywords || DEFAULT_SEO.keywords,
+      alternates: { canonical: "/" },
       openGraph: {
-        title: s?.og_title || undefined,
-        description: s?.og_description || undefined,
+        title: s?.og_title || title,
+        description: s?.og_description || description,
+        url: "https://topstatus.space",
+        siteName: "TopStatus",
+        type: "website",
+        locale: "en_US",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: s?.og_title || title,
+        description: s?.og_description || description,
       },
     };
   } catch {
-    return { title: DEFAULT_SEO.title, description: DEFAULT_SEO.description, keywords: DEFAULT_SEO.keywords };
+    return {
+      title: DEFAULT_SEO.title,
+      description: DEFAULT_SEO.description,
+      keywords: DEFAULT_SEO.keywords,
+      alternates: { canonical: "/" },
+      openGraph: {
+        title: DEFAULT_SEO.title,
+        description: DEFAULT_SEO.description,
+        url: "https://topstatus.space",
+        siteName: "TopStatus",
+        type: "website",
+        locale: "en_US",
+      },
+    };
   }
 }
 
@@ -488,6 +513,51 @@ export default function HomePage() {
           </Container>
         </section>
       </main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebSite",
+                "@id": "https://topstatus.space/#website",
+                url: "https://topstatus.space",
+                name: "TopStatus",
+                description: DEFAULT_SEO.description,
+              },
+              {
+                "@type": "Organization",
+                "@id": "https://topstatus.space/#organization",
+                url: "https://topstatus.space",
+                name: "TopStatus",
+                description: DEFAULT_SEO.description,
+              },
+              {
+                "@type": "SoftwareApplication",
+                name: "TopStatus",
+                applicationCategory: "WebApplication",
+                operatingSystem: "Any",
+                url: "https://topstatus.space",
+                description: DEFAULT_SEO.description,
+                offers: [
+                  { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free plan" },
+                  { "@type": "Offer", price: "19", priceCurrency: "USD", description: "Paid plan (monthly)" },
+                  { "@type": "Offer", price: "150", priceCurrency: "USD", description: "Yearly plan" },
+                ],
+              },
+              {
+                "@type": "FAQPage",
+                mainEntity: faq.map((f) => ({
+                  "@type": "Question",
+                  name: f.q,
+                  acceptedAnswer: { "@type": "Answer", text: f.a },
+                })),
+              },
+            ],
+          }),
+        }}
+      />
       <SiteFooter />
       <AssistLoopWidget />
     </div>
