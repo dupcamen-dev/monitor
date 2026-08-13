@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Container } from "@/components/container";
@@ -124,9 +125,33 @@ const faq = [
   },
   {
     q: "How can I contact you?",
-    a: "Email us at ringoosamsungj710@gmail.com or message us on Telegram at @NothingUA. We're happy to help with setup, billing, or anything else.",
+    a: "Email us at [ringoosamsungj710@gmail.com](mailto:ringoosamsungj710@gmail.com) or message us on Telegram at [@NothingUA](https://t.me/NothingUA). We're happy to help with setup, billing, or anything else.",
   },
 ];
+
+function renderInlineLinks(text: string): ReactNode {
+  const parts: ReactNode[] = [];
+  let last = 0;
+  const re = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    const external = m[2].startsWith("http");
+    parts.push(
+      <a
+        key={m.index}
+        href={m[2]}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className="text-on-surface underline decoration-primary/40 underline-offset-2 hover:text-primary"
+      >
+        {m[1]}
+      </a>
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
 
 
 const comparisons: { feature: string; rows: { uptime: CellValue; statuspage: CellValue; us: CellValue } }[] = [
@@ -508,7 +533,7 @@ export default function HomePage() {
                       </span>
                     </summary>
                     <div className="overflow-hidden">
-                      <div className="px-6 pb-6 text-body-sm text-on-surface-variant">{item.a}</div>
+                      <div className="px-6 pb-6 text-body-sm text-on-surface-variant">{renderInlineLinks(item.a)}</div>
                     </div>
                   </details>
                 </Reveal>
@@ -555,7 +580,7 @@ export default function HomePage() {
                 mainEntity: faq.map((f) => ({
                   "@type": "Question",
                   name: f.q,
-                  acceptedAnswer: { "@type": "Answer", text: f.a },
+                  acceptedAnswer: { "@type": "Answer", text: f.a.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") },
                 })),
               },
             ],
